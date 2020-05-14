@@ -47,8 +47,8 @@ async def getMessages(
 
 @telegramDialogs_router.get("/send_messages")
 async def sendMessages(
-    chat_id: int,
     id: str,
+    chat_id: int,
     message: str,
     reply_to: int = None,
     parse_mode: str = None,
@@ -76,8 +76,8 @@ async def sendMessages(
 
 @telegramDialogs_router.post("/upload_file")
 async def uploadFile(
-    chat_id: int,
     id: str,
+    chat_id: int,
     file: List[str],
     caption: str = None,
     force_document: bool = False,
@@ -116,8 +116,8 @@ async def uploadFile(
 
 @telegramDialogs_router.patch("/edit_message")
 async def editMessage(
-    chat_id: int,
     id: str,
+    chat_id: int,
     message_id: int,
     new_message: str,
     parse_mode: str = None,

@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from database.mongodb_utils import close_mongo_connection, connect_to_mongo
 from telegram_auth.routes import telegramAuth_router
 from telegram_dialogs.routes import telegramDialogs_router
+from telegram_encrypt.routes import telegramCryto_router
 
 app = FastAPI(
     title="Telegram API",
@@ -15,7 +16,7 @@ app.add_event_handler("shutdown", close_mongo_connection)
 
 app.include_router(
     telegramAuth_router,
-    prefix="/telegram auth",
+    prefix="/telegram_auth",
     tags=["telegram auth"],
     responses={404: {"description": "Not found"}},
 )
@@ -23,8 +24,15 @@ app.include_router(
 
 app.include_router(
     telegramDialogs_router,
-    prefix="/telegram dialogs",
+    prefix="/telegram_dialogs",
     tags=["telegram dialogs"],
+    responses={404: {"description": "Not found"}},
+)
+
+app.include_router(
+    telegramCryto_router,
+    prefix="/telegram_crypto",
+    tags=["telegram crypto"],
     responses={404: {"description": "Not found"}},
 )
 

@@ -94,20 +94,11 @@ def decrypt_file(file, key):
     return data
 
 
-salt = "awds".encode('UTF-8')
+# def create_token()
 
-pfile = "Z_key/peer_private_key.txt"
-sfile = "Z_key/server_public_key.txt"
-share_key = create_share_key(pfile, sfile, "123")
-key = create_derived_key(share_key, salt=salt)
+# salt = "awds".encode('UTF-8')
 
-chunksize = 1024
-
-
-with open("vdo.mp4", 'rb') as f:
-    while True:
-        data = f.read(chunksize)
-        if not data:
-            break  # done
-        encrypt = encrypt_file(data, key)
-        print(encrypt)
+# pfile = "Z_key/peer_private_key.txt"
+# sfile = "Z_key/server_public_key.txt"
+# share_key = create_share_key(pfile, sfile, "123")
+# key = create_derived_key(share_key, salt=salt)

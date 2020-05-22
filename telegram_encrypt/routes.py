@@ -26,9 +26,13 @@ async def generateKey(
 
 
 @telegramCryto_router.post("/upload_encrypt_video")
-async def uploadEncrypt(id: str = "5ea28612fc329b4980f45c39"):
+async def uploadEncrypt(
+    private_key_password: str,
+    filename: str,
+    id: str = "5ea28612fc329b4980f45c39"
+):
     auth = await _get_telegram_or_404(id)
 
-    file = await upload_encrypt_file(auth['auth_key'])
+    file = await upload_encrypt_file(auth['auth_key'], private_key_password, filename)
 
     return {'message': file}

@@ -1,4 +1,5 @@
 import os
+import hashlib
 
 from telethon import TelegramClient
 from telethon.sessions import StringSession
@@ -27,8 +28,13 @@ async def generate_key(auth_key, password):
     return True
 
 
-async def upload_encrypt_file(auth_key):
-    password = "awds"
+def _filename(name, n):
+    name = hashlib.sha1(name.encode()).hexdigest()
+    name = f"{name}_{n}.txt"
+    return name
+
+
+async def upload_encrypt_file(auth_key, password, filename):
     try:
         client = TelegramClient(StringSession(auth_key), api_id, api_hash)
         await client.connect()
@@ -36,29 +42,33 @@ async def upload_encrypt_file(auth_key):
         return "client error"
 
     me = await client.get_me()
-
     dir = f"Chat/{me.id}/key/private_key.txt"
+
     try:
         share_key = create_share_key(
             dir, password, SERVER_TOKEN.encode(), KEY_MASTER, SALT.encode())
     except ValueError:
         return "wrong password"
-    encrypt_key = created_key(share_key, SALT.encode())
-    filesize = os.stat('requirements.txt').st_size
-    chunksize = (filesize // 2) + 1
 
+    encrypt_key = created_key(share_key, SALT.encode())
+    filesize = os.stat(filename).st_size
+
+    chunksize = (filesize // 2) + 1
+    n = 0
     try:
-        with open("requirements.txt", 'rb') as f:
+        with open(filename, 'rb') as f:
             while True:
                 data = f.read(chunksize)
                 encrypt = encrypt_file(data, encrypt_key)
+                n += 1
                 if not data:
-                    break  # done
+                    break
+                name = _filename(filename, n)
                 await client.send_file(
                     "me",
                     file=encrypt,
                     attributes=[DocumentAttributeFilename(
-                        file_name="requirements.txt")]
+                        file_name=name)]
                 )
 
         return {'message': 'upload success'}

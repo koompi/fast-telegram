@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from database.mongodb import db
 from utils.get_telegram import _get_telegram_or_404
 
-from .telegram_encrypt import get_key, upload_encrypt_file
+from .telegram_encrypt import generate_key, upload_encrypt_file
 
 telegramCryto_router = APIRouter()
 
@@ -15,7 +15,7 @@ async def generateKey(
 ):
     auth = await _get_telegram_or_404(id)
 
-    file = await get_key(
+    file = await generate_key(
         auth['auth_key'],
         password
     )
@@ -30,7 +30,5 @@ async def uploadEncrypt(id: str = "5ea28612fc329b4980f45c39"):
     auth = await _get_telegram_or_404(id)
 
     file = await upload_encrypt_file(auth['auth_key'])
-    if file:
-        return {'message': 'upload success'}
-    else:
-        return {'message': 'upload no success'}
+
+    return {'message': file}

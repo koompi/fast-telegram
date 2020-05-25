@@ -1,5 +1,6 @@
-import glob
 import mimetypes
+import hashlib
+import glob
 import os
 
 
@@ -47,3 +48,9 @@ def exit_files(dirName, filename, mimetype):
         if path_to_file == filename:
             return False
     return True
+
+
+def _filename(name, n):
+    name = hashlib.sha224(name.encode()).hexdigest()
+    name = f"{name}_{n}.txt"
+    return name

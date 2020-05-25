@@ -71,7 +71,7 @@ async def get_all_messages(
     try:
         entity = await get_entity(chat_id, client)
     except:
-        return "entity error"
+        return "get entity error"
 
     messages = []
 

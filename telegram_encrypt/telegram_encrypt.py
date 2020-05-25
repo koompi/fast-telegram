@@ -3,12 +3,12 @@ import hashlib
 
 from telethon import TelegramClient
 from telethon.sessions import StringSession
-from telethon.tl.types import DocumentAttributeFilename
 
 from utils.get_env import api_hash, api_id, SERVER_TOKEN, SALT, KEY_MASTER
-from utils._file import create_new_dir
+from utils.upload_file import uploadFilEncrypt
+from utils.get_entity import get_entity
 
-from security.security import generate_key, create_share_key, created_key, encrypt_file
+from security.security import generate_key, decrypt_file, create_share_key, created_key
 
 
 async def generate_key(auth_key, password):
@@ -16,7 +16,7 @@ async def generate_key(auth_key, password):
         client = TelegramClient(StringSession(auth_key), api_id, api_hash)
         await client.connect()
     except:
-        return "client error"
+        return {"message": "client error"}
 
     me = await client.get_me()
 
@@ -28,49 +28,74 @@ async def generate_key(auth_key, password):
     return True
 
 
-def _filename(name, n):
-    name = hashlib.sha1(name.encode()).hexdigest()
-    name = f"{name}_{n}.txt"
-    return name
-
-
 async def upload_encrypt_file(auth_key, password, filename):
+    try:
+        client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+        await client.connect()
+    except:
+        return {"message": "client error"}
+
+    message = await uploadFilEncrypt(client, password, filename)
+
+    return message
+
+
+async def dowloadFileDecrypt(
+    client,
+    decrypt_key,
+    entity, search,
+    from_user, limit
+):
+
+    async for message in client.iter_messages(
+        entity,
+        search=search,
+        from_user=from_user,
+        limit=limit
+    ):
+        if message.file:
+            with open('test.txt', 'wb') as fd:
+                async for chunk in client.iter_download(message.media):
+                    chunk = decrypt_file(chunk, decrypt_key)
+                    fd.write(chunk)
+            return {"message": "download Success"}
+
+        else:
+            return {"message": "unsupport type data"}
+
+
+async def download_decrypt_file(auth_key, chat_id, search, from_user, limit):
     try:
         client = TelegramClient(StringSession(auth_key), api_id, api_hash)
         await client.connect()
     except:
         return "client error"
 
+    try:
+        entity = await get_entity(chat_id, client)
+    except:
+        return {"message": "get entity error"}
+
     me = await client.get_me()
     dir = f"Chat/{me.id}/key/private_key.txt"
+    password = "awds"
 
     try:
         share_key = create_share_key(
             dir, password, SERVER_TOKEN.encode(), KEY_MASTER, SALT.encode())
     except ValueError:
-        return "wrong password"
+        return {"message": "wrong password"}
 
-    encrypt_key = created_key(share_key, SALT.encode())
-    filesize = os.stat(filename).st_size
-
-    chunksize = (filesize // 2) + 1
-    n = 0
+    decrypt_key = created_key(share_key, SALT.encode())
     try:
-        with open(filename, 'rb') as f:
-            while True:
-                data = f.read(chunksize)
-                encrypt = encrypt_file(data, encrypt_key)
-                n += 1
-                if not data:
-                    break
-                name = _filename(filename, n)
-                await client.send_file(
-                    "me",
-                    file=encrypt,
-                    attributes=[DocumentAttributeFilename(
-                        file_name=name)]
-                )
-
-        return {'message': 'upload success'}
+        message = await dowloadFileDecrypt(
+            client,
+            decrypt_key,
+            entity,
+            search,
+            from_user,
+            limit
+        )
+        return message
     except:
-        return {'message': 'upload no success'}
+        return {"message": "download fail"}

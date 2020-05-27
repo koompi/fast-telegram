@@ -2,5 +2,10 @@ import os
 
 
 def chuckSize(filename):
-    filesize = os.stat(filename).st_size
-    chunksize = (filesize // 2) + 1
+    bytes = os.stat(filename).st_size
+    if (bytes < 650):
+        bytes = 650
+
+    size = bytes // 30
+
+    return size + 1

@@ -10,6 +10,8 @@ from cryptography.fernet import Fernet
 
 from utils._file import create_new_dir
 
+from utils.get_env import SERVER_TOKEN, SALT, KEY_MASTER
+
 
 def generate_key(password, id):
     private_key = ec.generate_private_key(
@@ -115,3 +117,15 @@ def create_share_key(sp_private, password, token, key, salt):
         ec.ECDH(), ps_public_key)
 
     return shared_key
+
+
+def get_decrypt_key(password, id):
+    dir = f"Chat/{id}/key/private_key.txt"
+    try:
+        share_key = create_share_key(
+            dir, password, SERVER_TOKEN.encode(), KEY_MASTER, SALT.encode())
+    except ValueError:
+        return {"message": "wrong password"}
+
+    decrypt_key = created_key(share_key, SALT.encode())
+    return decrypt_key

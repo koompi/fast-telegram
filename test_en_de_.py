@@ -2,13 +2,29 @@ import hashlib
 import os
 from utils.get_env import SERVER_TOKEN, SALT, KEY_MASTER
 
-from security.security import create_share_key, created_key, encrypt_file, decrypt_file
+from security.security import create_token, decrypt_token
+
+# dir = f"Chat/467551940/key/public_key.txt"
+
+# with open(dir, "rb") as f:
+#     token = create_token(f.read(), KEY_MASTER, SALT.encode())
+
+# data = decrypt_token(token, KEY_MASTER, SALT.encode())
+# print(token.decode())
 
 
-dir = f"Chat/467551940/key/private_key.txt"
+import os
+import sys
 
-share_key = create_share_key(
-    dir, "awds", SERVER_TOKEN.encode(), KEY_MASTER, SALT.encode())
-encrypt_key = created_key(share_key, SALT.encode())
 
-file = decrypt_file()
+def chuckSize(filename):
+    bytes = os.stat(filename).st_size
+    if (bytes < 650):
+        bytes = 650
+
+    size = bytes // 30
+
+    return size + 1
+
+
+print(chuckSize("vdo.mp4"))

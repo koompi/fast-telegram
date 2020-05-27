@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from database.mongodb import db
 from utils.get_telegram import _get_telegram_or_404
 
-from .telegram_encrypt import generate_key, upload_encrypt_file, download_decrypt_file
+from .telegram_encrypt import _key, upload_encrypt_file, download_decrypt_file
 
 telegramCryto_router = APIRouter()
 
@@ -15,7 +15,7 @@ async def generateKey(
 ):
     auth = await _get_telegram_or_404(id)
 
-    file = await generate_key(
+    file = await _key(
         auth['auth_key'],
         password
     )
@@ -38,22 +38,43 @@ async def uploadEncrypt(
     return {'message': file}
 
 
-@telegramCryto_router.get("/download_decrypt_video")
+@telegramCryto_router.get("/download_decrypt_video/owner")
 async def dowloadDecrypt(
     search: str,
+    password: str,
     chat_id: int = 467551940,
-    from_user: int = None,
-    limit: int = 1,
     id: str = "5ea28612fc329b4980f45c39"
 ):
     auth = await _get_telegram_or_404(id)
 
     message = await download_decrypt_file(
-        auth['auth_key'],
-        chat_id,
-        search,
-        from_user,
-        limit
+        auth_key=auth['auth_key'],
+        chat_id=chat_id,
+        password=password,
+        search=search,
+        from_user=None,
+        role='owner'
+    )
+
+    return message
+
+
+@telegramCryto_router.get("/download_decrypt_video/admin")
+async def dowloadDecrypt(
+    search: str,
+    password: str,
+    chat_id: int = 467551940,
+    id: str = "5ea28612fc329b4980f45c39"
+):
+    auth = await _get_telegram_or_404(id)
+
+    message = await download_decrypt_file(
+        auth_key=auth['auth_key'],
+        chat_id=chat_id,
+        password=password,
+        search=search,
+        from_user=None,
+        role='owner'
     )
 
     return message

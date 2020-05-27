@@ -40,4 +40,4 @@ async def uploadFilEncrypt(client, password, filename):
 
         return {'message': 'upload success'}
     except:
-        return {'message': 'upload no success'}
+        return {'message': 'upload not success'}

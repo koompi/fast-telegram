@@ -4,6 +4,8 @@ from telethon.tl.custom.file import File
 
 from utils._file import create_filename, create_new_dir, exit_files
 
+from security.security import generate_key, decrypt_file
+
 
 async def download_file(media, chat_id, client, specific_dir=None):
     files = File(media)
@@ -39,3 +41,4 @@ async def download_profile_photo(entity, client, chat_id, chat_name):
         filename = None
 
     return filename
+

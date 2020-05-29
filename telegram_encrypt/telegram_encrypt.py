@@ -65,14 +65,10 @@ async def download_decrypt_file(
         me = await client.get_me()
         from_user = me.id
         decrypt_key = get_decrypt_key(password, me.id)
-    n = 1
 
-    try:
-        os.remove(f'video/{search}.mp4')
-    except FileNotFoundError:
-        pass
+    n = check_file(search)
 
-    while n <= 300:
+    while n <= 30:
         filename = f"{search}_{n}.txt"
         message = await client.get_messages(
             entity=entity,
@@ -88,22 +84,38 @@ async def download_decrypt_file(
 
                     with open(f'temp/{search}_{n}.txt', 'rb') as f:
                         token = f.read()
-
                     data = decrypt_file(token, decrypt_key)
 
                     with open(f'video/{search}.mp4', 'ab') as f:
                         f.write(data)
                         os.remove(f'temp/{search}_{n}.txt')
 
-                    client.flood_sleep_threshold = 24 * 60 * 60
-
+                    print(message[0].id)
                     n += 1
                 except errors.FloodWaitError as e:
                     os.remove(f'temp/{search}_{n}.txt')
-                    n -= 1
-                    time.sleep(e.seconds)
+                    client.flood_sleep_threshold = 24 * 60 * 60
 
         else:
             return {"message": "File you want to download is not found"}
             break
     return {"message": "download sucess"}
+
+
+def check_file(search):
+    try:
+        os.remove(f'video/{search}.mp4')
+    except FileNotFoundError:
+        pass
+
+    try:
+        os.mkdir('temp')
+    except FileExistsError:
+        pass
+
+    try:
+        os.mkdir('video')
+    except FileExistsError:
+        pass
+    n = 1
+    return n

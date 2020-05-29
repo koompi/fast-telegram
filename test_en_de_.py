@@ -1,30 +1,22 @@
+from utils.create_chuck import chuckSize
 import hashlib
+import uuid
 import os
 from utils.get_env import SERVER_TOKEN, SALT, KEY_MASTER
 
-from security.security import create_token, decrypt_token
 
-# dir = f"Chat/467551940/key/public_key.txt"
-
-# with open(dir, "rb") as f:
-#     token = create_token(f.read(), KEY_MASTER, SALT.encode())
-
-# data = decrypt_token(token, KEY_MASTER, SALT.encode())
-# print(token.decode())
+from security.security import decrypt_file, get_decrypt_key
 
 
-import os
-import sys
+decrypt_key = get_decrypt_key('123', '467551940')
+name = '0bb0aad55413485eb81ccb8c64c2114e'
+n = 1
 
+while n <= 2:
+    with open(f'Z_key/{name}_{n}.txt', 'rb') as f:
+        token = f.read()
+    data = decrypt_file(token, decrypt_key)
 
-def chuckSize(filename):
-    bytes = os.stat(filename).st_size
-    if (bytes < 650):
-        bytes = 650
-
-    size = bytes // 30
-
-    return size + 1
-
-
-print(chuckSize("vdo.mp4"))
+    with open(f'Z_key/read.md', 'ab') as f:
+        f.write(data)
+    n += 1

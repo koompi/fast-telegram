@@ -1,8 +1,10 @@
 import os
+import time
 import hashlib
 
 from telethon import TelegramClient
 from telethon.sessions import StringSession
+from telethon import errors
 
 from utils.get_env import api_hash, api_id, SERVER_TOKEN, SALT, KEY_MASTER
 from utils.upload_file import uploadFilEncrypt
@@ -63,17 +65,45 @@ async def download_decrypt_file(
         me = await client.get_me()
         from_user = me.id
         decrypt_key = get_decrypt_key(password, me.id)
-        n = 1
-        filename = f"{search}_{n}.txt"
+    n = 1
 
-        async for message in client.iter_messages(
-            entity,
+    try:
+        os.remove(f'video/{search}.mp4')
+    except FileNotFoundError:
+        pass
+
+    while n <= 300:
+        filename = f"{search}_{n}.txt"
+        message = await client.get_messages(
+            entity=entity,
             search=filename,
-            from_user=from_user,
-        ):
-            if message.file:
-                with open(f'Z_key/{search}_{n}.mp4', 'wb') as fd:
-                    async for chunk in client.iter_download(message.media):
-                        fd.write(chunk)
-            n += 1
+            from_user=from_user
+        )
+        if message:
+            if message[0].file:
+                try:
+                    with open(f'temp/{search}_{n}.txt', 'wb') as fd:
+                        async for chunk in client.iter_download(message[0].media):
+                            fd.write(chunk)
+
+                    with open(f'temp/{search}_{n}.txt', 'rb') as f:
+                        token = f.read()
+
+                    data = decrypt_file(token, decrypt_key)
+
+                    with open(f'video/{search}.mp4', 'ab') as f:
+                        f.write(data)
+                        os.remove(f'temp/{search}_{n}.txt')
+
+                    client.flood_sleep_threshold = 24 * 60 * 60
+
+                    n += 1
+                except errors.FloodWaitError as e:
+                    os.remove(f'temp/{search}_{n}.txt')
+                    n -= 1
+                    time.sleep(e.seconds)
+
+        else:
+            return {"message": "File you want to download is not found"}
+            break
     return {"message": "download sucess"}

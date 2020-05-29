@@ -1,5 +1,4 @@
 import mimetypes
-import hashlib
 import glob
 import os
 
@@ -51,6 +50,5 @@ def exit_files(dirName, filename, mimetype):
 
 
 def _filename(name, n):
-    name = hashlib.sha224(name.encode()).hexdigest()
     name = f"{name}_{n}.txt"
     return name

@@ -30,3 +30,6 @@ app.add_event_handler('shutdown', close_mongo_connection)
 app.add_exception_handler(HTTPException, http_error_handler)
 app.add_exception_handler(HTTP_422_UNPROCESSABLE_ENTITY, http_422_error_handler)
 app.include_router(api_router, prefix=API_V1_STR)
+
+
+# uvicorn app.main:app --reload

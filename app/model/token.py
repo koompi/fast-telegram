@@ -1,0 +1,14 @@
+from .rwmodel import RWModel
+
+from pydantic import BaseModel
+from datetime import datetime
+
+
+class TokenPayload(RWModel):
+    username: str = ''
+
+
+class ServerTokenBase(BaseModel):
+    server_token: str
+    created_by: str
+    created_at: datetime = datetime.now()

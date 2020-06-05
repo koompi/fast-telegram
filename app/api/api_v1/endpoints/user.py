@@ -1,0 +1,76 @@
+from fastapi import APIRouter, Body, Depends, HTTPException
+
+from ....core.jwt import get_current_user_authorizer
+from ....crud.shortcuts import check_free_username_and_email
+from ....crud.user import update_user, confirm, resend_confirm_code
+from ....db.mongodb import AsyncIOMotorClient, get_database
+from ....models.user import (
+    User, UserInResponse,
+    UserInUpdate, ConfirmCode,
+    TelegramAuth, UserLogInResponse
+    )
+from ....utils.telegram.auth import sign_in
+
+router = APIRouter()
+
+
+@router.get('/user', response_model=UserLogInResponse, tags=['users'])
+async def retrieve_current_user(
+    user: User = Depends(get_current_user_authorizer())
+):
+    if not user.is_confirm:
+        raise HTTPException(status_code=400, detail='Unconfirm user')
+    return UserLogInResponse(user=user)
+
+
+@router.put('/user', response_model=UserInResponse, tags=['users'])
+async def update_current_user(
+    user: UserInUpdate = Body(..., embed=True),
+    current_user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    if user.username == current_user.username:
+        user.username = None
+    else:
+        if user.email == current_user.email:
+            user.email = None
+        if user.phone == current_user.phone:
+            user.phone = None
+    await check_free_username_and_email(
+        db,
+        user.username,
+        user.email,
+        user.phone
+    )
+    dbuser = await update_user(db, current_user.username, user)
+    return UserInResponse(
+        user=User(**dbuser.dict(), **{'token': current_user.token})
+        )
+
+
+@router.put('/resend', tags=['users'])
+async def resend(
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    await resend_confirm_code(
+        db, (user.username),
+        (user.phone),
+        force_sms=True
+    )
+    return {'message': 'resend code to Telegram success'}
+
+
+@router.post('/confirm', response_model=TelegramAuth, tags=['users'])
+async def telegram_comfirm(
+    code: ConfirmCode,
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    try:
+        auth_key = await sign_in(user.phone, code.code, user.phone_code_hash)
+    except Exception:
+        raise HTTPException(status_code=404, detail='telegram login error')
+
+    await confirm(db, user.username, auth_key)
+    return TelegramAuth(telegram_auth_key=auth_key)

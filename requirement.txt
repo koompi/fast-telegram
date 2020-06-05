@@ -1,0 +1,11 @@
+fastapi
+starlette
+python-dotenv==0.13.0
+pyjwt
+uvicorn
+bcrypt
+cryptography
+passlib
+pydantic
+python-multipart
+motor

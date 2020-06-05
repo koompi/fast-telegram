@@ -33,16 +33,21 @@ async def generate_server_token(
     user: User = Depends(get_current_user_authorizer()),
     db: AsyncIOMotorClient = Depends(get_database)
 ):
-    if user.role != 'admin':
+    try:
+        if user.role != 'admin':
+            raise HTTPException(
+                    status_code=400,
+                    detail='you don`t have permission'
+            )
+        with open('./key/public_key.txt', 'rb') as (f):
+            public_key = f.read()
+
+        token = create_token(public_key)
+        server = ServerTokenBase(server_token=token, created_by=(user.username))
+        dbtoken = await create_server_token(db, server)
+
+        return dbtoken
+    except FileNotFoundError:
         raise HTTPException(
-                status_code=400,
-                detail='you don`t have permission'
-        )
-    with open('./key/public_key.txt', 'rb') as (f):
-        public_key = f.read()
-
-    token = create_token(public_key)
-    server = ServerTokenBase(server_token=token, created_by=(user.username))
-    dbtoken = await create_server_token(db, server)
-
-    return dbtoken
+            status_code=400,
+            detail='You don`t key please generate first')

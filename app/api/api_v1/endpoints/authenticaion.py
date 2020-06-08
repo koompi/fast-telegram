@@ -1,7 +1,11 @@
 from datetime import timedelta
 from fastapi import APIRouter, Body, Depends
 from starlette.exceptions import HTTPException
-from starlette.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from starlette.status import (
+    HTTP_201_CREATED,
+    HTTP_400_BAD_REQUEST,
+    HTTP_200_OK
+    )
 
 from ....core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from ....core.jwt import create_access_token
@@ -17,10 +21,11 @@ router = APIRouter()
 @router.post(
     '/users/login',
     response_model=UserLogInResponse,
-    tags=['authentication']
+    tags=['authentication'],
+    status_code=HTTP_200_OK
 )
 async def login(
-    user: UserInLogin = Body(..., embed=True),
+    user: UserInLogin = Body(..., embed = True),
     db: AsyncIOMotorClient = Depends(get_database)
 ):
     dbuser = await get_user_by_email(db, user.email)
@@ -44,7 +49,7 @@ async def login(
     status_code=HTTP_201_CREATED
 )
 async def register(
-    user: UserInCreate = Body(..., embed=True),
+    user: UserInCreate = Body(..., embed = True),
     db: AsyncIOMotorClient = Depends(get_database)
 ):
     await check_free_username_and_email(
@@ -60,7 +65,7 @@ async def register(
             except Exception:
                 raise HTTPException(
                     status_code=404,
-                    detail='Telegram send code error.Please make sure you Telegram accout'
+                    detail='Send code error.Please make sure you have Telegram account'
                 )
 
             access_token_expires = timedelta(

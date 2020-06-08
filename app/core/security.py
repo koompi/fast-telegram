@@ -91,3 +91,38 @@ def create_token(public_key):
     f = Fernet(key)
     token = f.encrypt(public_key)
     return token
+
+
+def decrypt_token(token):
+    key = create_derive_key(
+        salt=(SALT.encode()),
+        key=(str(SECRET_KEY).encode())
+        )
+    f = Fernet(key)
+    public_key = f.decrypt(token)
+
+    return public_key
+
+
+def create_encrypt_key(password, public_key, salt):
+    if password is None:
+        password = None
+    else:
+        password = password.encode('UTF-8')
+
+    with open('./key/private_key.txt', 'rb') as f:
+        private_key = serialization.load_pem_private_key(
+            f.read(),
+            password=password,
+            backend=default_backend()
+        )
+    public_key = serialization.load_pem_public_key(
+        public_key,
+        backend=default_backend()
+    )
+    shared_key = private_key.exchange(
+        ec.ECDH(), public_key)
+
+    crypto_key = create_derive_key(shared_key, salt.encode())
+
+    return crypto_key

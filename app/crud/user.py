@@ -42,7 +42,7 @@ async def create_user(
     dbuser = UserInDB(**user.dict())
     dbuser.change_password(user.password)
     phone = clear_phone_format(user.phone)
-    dbuser.phone_code_hash = 'phone_code_hash'
+    dbuser.phone_code_hash = await send_code_request(phone, user.force_sms)
     dbuser.phone = phone
 
     await conn[database_name][users_collection_name].insert_one(dbuser.dict())

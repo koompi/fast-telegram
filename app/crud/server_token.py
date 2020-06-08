@@ -1,7 +1,6 @@
 from ..models.token import ServerTokenBase
 from ..db.mongodb import AsyncIOMotorClient
 from ..core.config import database_name, server_token_collection_name
-from .get_by_id import _get_data_or_404
 
 
 async def create_server_token(
@@ -14,14 +13,6 @@ async def create_server_token(
         .insert_one(server_token)
 
     return ServerTokenBase(**server_token)
-
-
-async def get_token_by_id(
-    conn: AsyncIOMotorClient,
-    id: str
-):
-    token = await _get_data_or_404(id)
-    return token
 
 
 async def fetch_all_servertoken(

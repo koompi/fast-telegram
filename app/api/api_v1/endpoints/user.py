@@ -11,21 +11,42 @@ from ....models.user import (
     )
 from ....utils.telegram.auth import sign_in
 
+from starlette.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_200_OK,
+    HTTP_403_FORBIDDEN,
+    HTTP_202_ACCEPTED
+    )
+
+
 router = APIRouter()
 
 
-@router.get('/user', response_model=UserLogInResponse, tags=['users'])
+@router.get(
+    '/user',
+    response_model=UserLogInResponse,
+    tags=['users'],
+    status_code=HTTP_200_OK
+    )
 async def retrieve_current_user(
     user: User = Depends(get_current_user_authorizer())
 ):
     if not user.is_confirm:
-        raise HTTPException(status_code=400, detail='Unconfirm user')
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail='unauthorize user'
+        )
     return UserLogInResponse(user=user)
 
 
-@router.put('/user', response_model=UserInResponse, tags=['users'])
+@router.put(
+    '/user',
+    response_model=UserInResponse,
+    tags=['users'],
+    status_code=HTTP_200_OK,
+    )
 async def update_current_user(
-    user: UserInUpdate = Body(..., embed=True),
+    user: UserInUpdate = Body(..., embed = True),
     current_user: User = Depends(get_current_user_authorizer()),
     db: AsyncIOMotorClient = Depends(get_database)
 ):
@@ -48,7 +69,7 @@ async def update_current_user(
         )
 
 
-@router.put('/resend', tags=['users'])
+@router.put('/resend', tags=['users'], status_code=HTTP_200_OK)
 async def resend(
     user: User = Depends(get_current_user_authorizer()),
     db: AsyncIOMotorClient = Depends(get_database)
@@ -61,7 +82,12 @@ async def resend(
     return {'message': 'resend code to Telegram success'}
 
 
-@router.post('/confirm', response_model=TelegramAuth, tags=['users'])
+@router.post(
+    '/confirm',
+    response_model=TelegramAuth,
+    tags=['users'],
+    status_code=HTTP_202_ACCEPTED
+    )
 async def telegram_comfirm(
     code: ConfirmCode,
     user: User = Depends(get_current_user_authorizer()),
@@ -70,7 +96,10 @@ async def telegram_comfirm(
     try:
         auth_key = await sign_in(user.phone, code.code, user.phone_code_hash)
     except Exception:
-        raise HTTPException(status_code=404, detail='telegram login error')
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail='telegram login error'
+        )
 
     await confirm(db, user.username, auth_key)
     return TelegramAuth(telegram_auth_key=auth_key)

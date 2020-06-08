@@ -1,5 +1,4 @@
 from fastapi import HTTPException
-from ..db.mongodb import db
 from ..db.mongodb_validators import validate_object_id
 
 
@@ -14,9 +13,9 @@ def fix_data_id(data):
         )
 
 
-async def _get_data_or_404(id: str):
+async def _get_data_or_404(conn, id: str, database, collection):
     _id = validate_object_id(id)
-    data = await db.data.find_one({"_id": _id})
+    data = await conn[database][collection].find_one({"_id": _id})
     if data:
         return fix_data_id(data)
     else:

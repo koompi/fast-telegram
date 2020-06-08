@@ -8,7 +8,7 @@ from ....models.secure_key import Generate
 from ....models.token import ServerTokenBase
 from ....crud.user import exit_key
 from ....utils.telegram.upload import upload_key
-from ....crud.server_token import create_server_token
+from ....crud.server_token import create_server_token, fetch_all_servertoken
 
 router = APIRouter()
 
@@ -28,7 +28,7 @@ async def generate_new_key(
     raise HTTPException(status_code=400, detail='your key is already exit')
 
 
-@router.get('/generate_token', response_model=ServerTokenBase, tags=['admin'])
+@router.post('/generate_token', response_model=ServerTokenBase, tags=['admin'])
 async def generate_server_token(
     user: User = Depends(get_current_user_authorizer()),
     db: AsyncIOMotorClient = Depends(get_database)
@@ -39,11 +39,14 @@ async def generate_server_token(
                     status_code=400,
                     detail='you don`t have permission'
             )
-        with open('./key/public_key.txt', 'rb') as (f):
+        with open('./key/public_key.txt', 'rb') as f:
             public_key = f.read()
 
         token = create_token(public_key)
-        server = ServerTokenBase(server_token=token, created_by=(user.username))
+        server = ServerTokenBase(
+            server_token=token,
+            created_by=(user.username)
+            )
         dbtoken = await create_server_token(db, server)
 
         return dbtoken
@@ -51,3 +54,12 @@ async def generate_server_token(
         raise HTTPException(
             status_code=400,
             detail='You don`t key please generate first')
+
+
+@router.get(
+    '/fecth_all_token',
+    tags=['keys']
+)
+async def get_all_ServerTokens(db: AsyncIOMotorClient = Depends(get_database)):
+    server_tokens = await fetch_all_servertoken(db)
+    return server_tokens

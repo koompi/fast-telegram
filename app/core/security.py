@@ -1,3 +1,4 @@
+import os
 import bcrypt
 import base64
 
@@ -51,6 +52,10 @@ def generate_private_public_key(password):
         format=(serialization.PublicFormat.SubjectPublicKeyInfo)
 
     )
+    try:
+        os.mkdir('./key')
+    except FileExistsError:
+        pass
     diretory = './key'
     private_key_dir = f"{diretory}/private_key.txt"
     public_key_dir = f"{diretory}/public_key.txt"

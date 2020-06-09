@@ -126,3 +126,9 @@ def create_encrypt_key(password, public_key, salt):
     crypto_key = create_derive_key(shared_key, salt.encode())
 
     return crypto_key
+
+
+def encrypt_file(bytes, key):
+    f = Fernet(key)
+    token = f.encrypt(bytes)
+    return token

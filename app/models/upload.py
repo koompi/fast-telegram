@@ -25,7 +25,7 @@ class UploadInResponse(BaseModel):
 
 
 class UploadInCreate(UploadBase):
-    chat_id: int
+    peer_id: int
     token_id: str
     password: str = None
 
@@ -38,4 +38,5 @@ class DownloadBase(BaseModel):
 
 class DowloadInCreate(BaseModel):
     file_id: str
+    peer_id: int
     password: str = None

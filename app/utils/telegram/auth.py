@@ -7,7 +7,10 @@ from telethon.errors import SessionPasswordNeededError
 from ...core.config import api_id, api_hash
 
 
-async def send_code_request(phone_number, force_sms):
+async def send_code_request(
+    phone_number: str,
+    force_sms: bool
+):
     try:
         client = TelegramClient(phone_number, api_id, api_hash)
         await client.connect()
@@ -22,7 +25,11 @@ async def send_code_request(phone_number, force_sms):
         os.remove(f"{phone_number}.session")
 
 
-async def sign_in(phone_number, code, phone_code_hash):
+async def sign_in(
+    phone_number: str,
+    code: int,
+    phone_code_hash: str
+):
     client = TelegramClient(phone_number, api_id, api_hash)
     await client.connect()
     try:

@@ -16,7 +16,6 @@ from ....core.security import create_token
 from ....crud.upload_dowload import upload_file, dowload_files_admin
 
 from starlette.status import (
-    HTTP_200_OK,
     HTTP_403_FORBIDDEN,
     HTTP_401_UNAUTHORIZED
     )
@@ -28,7 +27,6 @@ router = APIRouter()
     '/upload_files',
     tags=['files'],
     response_model=UploadInResponse,
-    status_code=HTTP_200_OK
     )
 async def uploads_new_file(
     file: UploadInCreate,
@@ -64,7 +62,7 @@ async def uploads_new_file(
                     file.token_id,
                     user.telegram_auth_key,
                     file.password,
-                    file.chat_id
+                    file.peer_id
                 )
     return UploadInResponse(upload=dbuploader)
 
@@ -72,7 +70,6 @@ async def uploads_new_file(
 @router.post(
     '/dowload_files',
     tags=['files'],
-    status_code=HTTP_200_OK
 )
 async def dowload_files(
     file: DowloadInCreate,
@@ -88,15 +85,13 @@ async def dowload_files(
     if user.role == 'admin':
         dowload = DowloadInCreate(
             file_id=file.file_id,
-            password=file.password
-
+            password=file.password,
+            peer_id=file.peer_id,
         )
 
         doc_download = await dowload_files_admin(
             db,
-            dowload
+            dowload,
+            auth_key=user.telegram_auth_key
         )
-    return {
-        'message': 'dowload success',
-        'filename': doc_download
-        }
+    return {'message': f'dowload {doc_download} success'}

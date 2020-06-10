@@ -2,7 +2,7 @@ import os
 from fastapi import HTTPException
 
 
-def create_chuck(filename):
+def create_chuck(filename: str):
     try:
         bytes = os.stat(filename).st_size
     except FileNotFoundError:
@@ -11,6 +11,6 @@ def create_chuck(filename):
     if (bytes < 650):
         bytes = 650
 
-    size = bytes // 30
+    size = bytes // 3
 
     return size + 1

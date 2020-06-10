@@ -10,7 +10,10 @@ from ..extra.chucksize import create_chuck
 from .entitiy import get_entity
 
 
-async def upload_key(auth_key, password):
+async def upload_key(
+    auth_key: str,
+    password: str
+):
     try:
         client = TelegramClient(StringSession(auth_key), api_id, api_hash)
         await client.connect()
@@ -23,19 +26,21 @@ async def upload_key(auth_key, password):
 
 
 async def upload_encrypt_file(
-    auth_key,
-    encrypt_key,
-    filename,
-    file_id,
-    entity,
-    n=1
+    auth_key: str,
+    encrypt_key: bytes,
+    filename: str,
+    file_id: str,
+    entity: int,
+    n: int = 1
 ):
     try:
         client = TelegramClient(StringSession(auth_key), api_id, api_hash)
         await client.connect()
     except OSError:
         raise HTTPException(status_code=400, detail='Failed to connect')
-    entity_id = await get_entity(entity, client)
+
+    peer_id = await get_entity(entity, client)
+    print(peer_id)
 
     chucksize = create_chuck(filename)
     with open(filename, 'rb') as f:
@@ -47,7 +52,7 @@ async def upload_encrypt_file(
                 file = encrypt_file(data, encrypt_key)
                 try:
                     await client.send_file(
-                        entity_id,
+                        peer_id,
                         file=file,
                         attributes=[DocumentAttributeFilename(
                                 file_name=f"{file_id}_{n}.txt")]

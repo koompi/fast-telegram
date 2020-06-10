@@ -3,16 +3,16 @@ import os
 
 def remove_create(file_id: str):
     try:
-        os.remove(f'document/{file_id}.mp4')
+        os.remove(f'./documents/{file_id}.mp4')
     except FileNotFoundError:
         pass
 
     try:
-        os.mkdir('temp')
+        os.mkdir('./temp')
     except FileExistsError:
         pass
 
     try:
-        os.mkdir('video')
+        os.mkdir('documents')
     except FileExistsError:
         pass

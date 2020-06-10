@@ -132,3 +132,9 @@ def encrypt_file(bytes, key):
     f = Fernet(key)
     token = f.encrypt(bytes)
     return token
+
+
+def decrypt_file(bytes, key):
+    f = Fernet(key)
+    data = f.decrypt(bytes)
+    return data

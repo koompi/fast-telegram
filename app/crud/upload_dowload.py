@@ -62,7 +62,7 @@ async def dowload_files_admin(
         raise HTTPException(status_code=400, detail="File id not found")
 
     public_key = decrypt_token(row['upload_token'].encode())
-    
+
     try:
         decrypt_key = create_encrypt_key(
             download.password, public_key, salt=row['salt'])
@@ -75,6 +75,7 @@ async def dowload_files_admin(
         auth_key,
         download.peer_id,
         decrypt_key,
-        download.file_id
+        download.file_id,
+        row['filename']
     )
     return row['filename']

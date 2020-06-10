@@ -40,7 +40,6 @@ async def upload_encrypt_file(
         raise HTTPException(status_code=400, detail='Failed to connect')
 
     peer_id = await get_entity(entity, client)
-    print(peer_id)
 
     chucksize = create_chuck(filename)
     with open(filename, 'rb') as f:
@@ -57,6 +56,7 @@ async def upload_encrypt_file(
                         attributes=[DocumentAttributeFilename(
                                 file_name=f"{file_id}_{n}.txt")]
                     )
+                    client.flood_sleep_threshold = 24 * 60 * 60
                 except errors.FloodWaitError as e:
                     time.sleep(e.seconds)
 

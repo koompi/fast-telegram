@@ -40,3 +40,4 @@ class DowloadInCreate(BaseModel):
     file_id: str
     peer_id: int
     password: str = None
+    token_id: str = None

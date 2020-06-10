@@ -82,17 +82,19 @@ async def dowload_files(
             detail='Unconfirm user'
         )
 
-    if user.role == 'admin':
-        dowload = DowloadInCreate(
-            file_id=file.file_id,
-            password=file.password,
-            peer_id=file.peer_id,
-        )
+    dowload = DowloadInCreate(
+        file_id=file.file_id,
+        password=file.password,
+        peer_id=file.peer_id,
+        token_id=file.token_id
+    )
 
+    if user.role == 'admin' or user.role == 'uploader':
         doc_download, dir = await dowload_files_admin(
             db,
             dowload,
-            auth_key=user.telegram_auth_key
+            auth_key=user.telegram_auth_key,
+            role=user.role
         )
     return {
         'message': f'dowload {doc_download} success',

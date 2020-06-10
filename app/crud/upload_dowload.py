@@ -55,13 +55,24 @@ async def dowload_files_admin(
     conn: AsyncIOMotorClient,
     download: DownloadBase,
     auth_key: str,
+    role: str
 ):
     row = await conn[database_name][upload_collection_name] \
         .find_one({'file_id': download.file_id})
     if not row:
         raise HTTPException(status_code=400, detail="File id not found")
 
-    public_key = decrypt_token(row['upload_token'].encode())
+    if role == 'admin':
+        public_key = decrypt_token(row['upload_token'].encode())
+
+    elif role == 'uploader':
+        token = await _get_data_or_404(
+            conn,
+            download.token_id,
+            database_name,
+            server_token_collection_name
+            )
+        public_key = decrypt_token(token['server_token'].encode())
 
     try:
         decrypt_key = create_encrypt_key(

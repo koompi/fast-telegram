@@ -2,13 +2,15 @@ import os
 import bcrypt
 import base64
 
+from fastapi import HTTPException
 from passlib.context import CryptContext
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
+
 
 from ..core.config import SECRET_KEY, SALT
 
@@ -135,6 +137,12 @@ def encrypt_file(bytes, key):
 
 
 def decrypt_file(bytes, key):
-    f = Fernet(key)
-    data = f.decrypt(bytes)
+    try:
+        f = Fernet(key)
+        data = f.decrypt(bytes)
+    except InvalidToken:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid decrypt key"
+        )
     return data

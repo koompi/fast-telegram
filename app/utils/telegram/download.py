@@ -29,7 +29,7 @@ async def download_decrypt_file(
     while n <= 3:
         file = f"{file_id}_{n}.txt"
         dir = f'./temp/{file}'
-        _save = f'./documents/{filename}'
+        _save = f'documents/{filename}'
 
         message = await client.get_messages(
             entity=entity_id,
@@ -64,3 +64,5 @@ async def download_decrypt_file(
                 status_code=400,
                 detail='File have been delete or not exit'
             )
+
+    return os.path.abspath(_save)

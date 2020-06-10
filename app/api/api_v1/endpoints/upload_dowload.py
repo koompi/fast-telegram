@@ -89,9 +89,12 @@ async def dowload_files(
             peer_id=file.peer_id,
         )
 
-        doc_download = await dowload_files_admin(
+        doc_download, dir = await dowload_files_admin(
             db,
             dowload,
             auth_key=user.telegram_auth_key
         )
-    return {'message': f'dowload {doc_download} success'}
+    return {
+        'message': f'dowload {doc_download} success',
+        'file-location': dir
+        }

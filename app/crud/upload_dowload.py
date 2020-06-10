@@ -71,11 +71,11 @@ async def dowload_files_admin(
     except TypeError:
         raise HTTPException(status_code=400, detail="Need Password")
 
-    await download_decrypt_file(
+    file_downloaded = await download_decrypt_file(
         auth_key,
         download.peer_id,
         decrypt_key,
         download.file_id,
-        row['filename']
+        filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
     )
-    return row['filename']
+    return row['filename'], file_downloaded

@@ -14,7 +14,6 @@ class UserRole(str, Enum):
 
 
 class UserBase(RWModel):
-    username: str
     email: EmailStr
     phone: str
     role: UserRole = UserRole.user
@@ -25,6 +24,7 @@ class UserBase(RWModel):
 
 class UserInDB(UserBase):
     salt: str = ''
+    username: str = ''
     hashed_password: str = ''
     phone_code_hash: str = ''
     telegram_auth_key: str = ''
@@ -49,7 +49,6 @@ class UserInResponse(RWModel):
 
 
 class User2(BaseModel):
-    username: str
     email: EmailStr
     phone: str
     role: UserRole
@@ -66,14 +65,11 @@ class UserInLogin(RWModel):
 
 
 class UserInCreate(UserInLogin):
-    username: str
     phone: str
     force_sms: bool = False
 
 
 class UserInUpdate(RWModel):
-    username = None
-    username: Optional[str]
     email = None
     email: Optional[EmailStr]
     password = None

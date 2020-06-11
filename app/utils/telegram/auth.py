@@ -5,12 +5,14 @@ from telethon.sessions import StringSession
 from telethon.errors import SessionPasswordNeededError
 
 from ...core.config import api_id, api_hash
+from ..extra.phone_format import clear_phone_format
 
 
 async def send_code_request(
     phone_number: str,
     force_sms: bool
 ):
+    phone_number = clear_phone_format(phone_number)
     try:
         client = TelegramClient(phone_number, api_id, api_hash)
         await client.connect()

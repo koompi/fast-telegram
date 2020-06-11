@@ -42,8 +42,7 @@ async def _get_current_user(
                 detail='Could not validate credentials'
             )
 
-    dbuser = await get_user(db, token_data.username)
-
+    dbuser = await get_user(db, token_data.phone)
     if not dbuser:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,

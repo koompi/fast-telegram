@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class TokenPayload(RWModel):
-    username: str = ''
+    phone: str = ''
 
 
 class ServerTokenBase(BaseModel):

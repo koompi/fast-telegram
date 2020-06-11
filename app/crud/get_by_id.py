@@ -20,6 +20,6 @@ async def _get_data_or_404(conn, id: str, database, collection):
         return fix_data_id(data)
     else:
         raise HTTPException(
-            status_code=404, 
+            status_code=404,
             detail="data not found or Invalid Id"
             )

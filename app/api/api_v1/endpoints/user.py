@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException
 
 from ....core.jwt import get_current_user_authorizer
-from ....crud.shortcuts import check_free_username_and_email
+from ....crud.shortcuts import check_free_phone_and_email
 from ....crud.user import update_user, confirm, resend_confirm_code
 from ....db.mongodb import AsyncIOMotorClient, get_database
 from ....models.user import (
@@ -50,20 +50,17 @@ async def update_current_user(
     current_user: User = Depends(get_current_user_authorizer()),
     db: AsyncIOMotorClient = Depends(get_database)
 ):
-    if user.username == current_user.username:
-        user.username = None
+    if user.phone == current_user.phone:
+        user.phone = None
     else:
         if user.email == current_user.email:
             user.email = None
-        if user.phone == current_user.phone:
-            user.phone = None
-    await check_free_username_and_email(
+    await check_free_phone_and_email(
         db,
-        user.username,
         user.email,
         user.phone
     )
-    dbuser = await update_user(db, current_user.username, user)
+    dbuser = await update_user(db, current_user.phone, user)
     return UserInResponse(
         user=User(**dbuser.dict(), **{'token': current_user.token})
         )
@@ -75,8 +72,8 @@ async def resend(
     db: AsyncIOMotorClient = Depends(get_database)
 ):
     await resend_confirm_code(
-        db, (user.username),
-        (user.phone),
+        db,
+        user.phone,
         force_sms=True
     )
     return {'message': 'resend code to Telegram success'}
@@ -101,5 +98,5 @@ async def telegram_comfirm(
             detail='telegram login error'
         )
 
-    await confirm(db, user.username, auth_key)
+    await confirm(db, user.phone, auth_key)
     return TelegramAuth(telegram_auth_key=auth_key)

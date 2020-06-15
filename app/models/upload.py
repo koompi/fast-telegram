@@ -11,6 +11,7 @@ class UploadInDB(UploadBase):
     salt: str
     upload_token: str
     upload_by: str
+    secret_key: str = None
     uploaded_at: datetime = datetime.now()
 
 
@@ -41,3 +42,4 @@ class DowloadInCreate(BaseModel):
     peer_id: int
     password: str = None
     token_id: str = None
+    secret_key: str = None

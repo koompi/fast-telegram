@@ -64,7 +64,7 @@ async def register(
             except Exception:
                 raise HTTPException(
                     status_code=404,
-                    detail='Please make sure you have Telegram account'
+                    detail='Send code to Telegram Error.Please make sure you have Telegram account'  # noqa: E501
                 )
 
             access_token_expires = timedelta(

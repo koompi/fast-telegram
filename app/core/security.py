@@ -1,7 +1,9 @@
 import os
 import bcrypt
 import base64
+import jwt
 
+from datetime import datetime, timedelta
 from fastapi import HTTPException
 from passlib.context import CryptContext
 from cryptography.hazmat.backends import default_backend
@@ -11,8 +13,8 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet, InvalidToken
 
+from ..core.config import SECRET_KEY, SALT, ALGORITHM
 
-from ..core.config import SECRET_KEY, SALT
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -146,3 +148,31 @@ def decrypt_file(bytes, key):
             detail="Invalid decrypt key"
         )
     return data
+
+
+def temp_key(key, salt, expire):
+    JWT_SECRET = f'{str(SECRET_KEY)}${salt}'
+    payload = {
+        'decrypt_key': key.decode(),
+        'exp': datetime.utcnow() + timedelta(days=expire)
+    }
+    jwt_token = jwt.encode(payload, JWT_SECRET, ALGORITHM)
+    return jwt_token
+
+
+def decrypt_temp_key(jwt_token, salt):
+    JWT_SECRET = f'{str(SECRET_KEY)}${salt}'
+
+    try:
+        decoded = jwt.decode(jwt_token, JWT_SECRET, ALGORITHM)
+        return decoded['decrypt_key'].encode()
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=400,
+            detail='Your key have been expired. Please change key'
+        )
+    except jwt.exceptions.InvalidSignatureError:
+        raise HTTPException(
+            status_code=400,
+            detail='Your key is wrong. Please try again'
+        )

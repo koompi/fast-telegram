@@ -11,9 +11,8 @@ from ..crud.user import get_user
 from ..db.mongodb import AsyncIOMotorClient, get_database
 from ..models.token import TokenPayload
 from ..models.user import User
-from .config import JWT_TOKEN_PREFIX, SECRET_KEY
+from .config import JWT_TOKEN_PREFIX, SECRET_KEY, ALGORITHM
 
-ALGORITHM = 'HS256'
 access_token_jwt_subject = 'access'
 
 

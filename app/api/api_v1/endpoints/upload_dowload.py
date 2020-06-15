@@ -13,7 +13,7 @@ from ....models.upload import (
 from ....models.user import User
 from ....core.security import create_token
 
-from ....crud.upload_dowload import upload_file, dowload_files_admin
+from ....crud.upload_dowload import upload_file, dowload_files_
 
 from starlette.status import (
     HTTP_403_FORBIDDEN,
@@ -86,16 +86,17 @@ async def dowload_files(
         file_id=file.file_id,
         password=file.password,
         peer_id=file.peer_id,
-        token_id=file.token_id
+        token_id=file.token_id,
+        secret_key=file.secret_key
     )
-
-    if user.role == 'admin' or user.role == 'uploader':
-        doc_download, dir = await dowload_files_admin(
-            db,
-            dowload,
-            auth_key=user.telegram_auth_key,
-            role=user.role
-        )
+    doc_download, dir = await dowload_files_(
+        db,
+        dowload,
+        auth_key=user.telegram_auth_key,
+        role=user.role,
+        username=user.username,
+        salt=user.salt
+    )
     return {
         'message': f'dowload {doc_download} success',
         'file-location': dir

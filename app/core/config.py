@@ -19,6 +19,7 @@ MIN_CONNECTIONS_COUNT = int(os.getenv('MIN_CONNECTIONS_COUNT', 10))
 
 SECRET_KEY = Secret(os.getenv('SECRET_KEY', 'secret key for project'))
 SALT = os.getenv('SALT', 'SALT for token')
+ALGORITHM = os.getenv('ALGORITHM', 'ALGORITHM for hash')
 
 PROJECT_NAME = os.getenv('PROJECT_NAME', 'FastAPI application with Telegram')
 

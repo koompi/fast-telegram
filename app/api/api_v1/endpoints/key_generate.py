@@ -4,11 +4,12 @@ from ....db.mongodb import AsyncIOMotorClient, get_database
 from ....core.jwt import get_current_user_authorizer
 from ....core.security import create_token
 from ....models.user import User
-from ....models.secure_key import Generate
+from ....models.secure_key import Generate, BuyKey
 from ....models.token import ServerTokenBase
 from ....crud.user import exit_key
 from ....utils.telegram.upload import upload_key
 from ....crud.server_token import create_server_token, fetch_all_servertoken
+from ....crud.upload_dowload import created_temp_Key
 from starlette.status import (
     HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
@@ -78,3 +79,32 @@ async def generate_server_token(
 async def get_all_ServerTokens(db: AsyncIOMotorClient = Depends(get_database)):
     server_tokens = await fetch_all_servertoken(db)
     return server_tokens
+
+
+@router.post(
+    '/buy_course',
+    tags=['keys'],
+    status_code=HTTP_200_OK
+)
+async def buy_key(
+    key: BuyKey,
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    if not user.is_confirm:
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail='Unconfirm user'
+        )
+
+    key, filename = await created_temp_Key(
+        db,
+        key.file_id,
+        key.expire,
+        user.salt
+    )
+
+    return {
+        'filename': filename,
+        'video key': key
+    }

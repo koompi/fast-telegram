@@ -41,7 +41,9 @@ class UserInDB(UserBase):
 
 class User(UserBase):
     token: str
+    salt: str
     phone_code_hash: str
+    username: str
 
 
 class UserInResponse(RWModel):
@@ -65,7 +67,7 @@ class UserInLogin(RWModel):
 
 
 class UserInCreate(UserInLogin):
-    phone: str
+    phone: str = None
     force_sms: bool = False
 
 

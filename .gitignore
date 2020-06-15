@@ -16,8 +16,9 @@ __pycache__/
 .Python
 .env
 build/
-Z_key/
+key/
 *.mp4
+*.png
 develop-eggs/
 dist/
 downloads/

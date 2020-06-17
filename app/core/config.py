@@ -30,4 +30,5 @@ MONGODB_URL = DatabaseURL(MONGODB_URL)
 users_collection_name = 'users'
 server_token_collection_name = 'server_token'
 upload_collection_name = 'upload'
+channel_collection_name = 'chaneel'
 database_name = 'TELEGRAM_DB'

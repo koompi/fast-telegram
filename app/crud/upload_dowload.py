@@ -117,7 +117,3 @@ async def created_temp_Key(
     key = temp_key(encrypt_key, salt, expire)
 
     return key, row['filename']
-
-# b'fNLMojcbdawfMsqb19FLHvBEIYirmbY1DhyrtuWuMyM='
-# b'fNLMojcbdawfMsqb19FLHvBEIYirmbY1DhyrtuWuMyM='
-# b'fNLMojcbdawfMsqb19FLHvBEIYirmbY1DhyrtuWuMyM='

@@ -12,10 +12,17 @@ from ....models.chat_channel import (
     ChannelInResponse,
     ChannelInCreate,
     Channel,
-    ChatRightInInput
+    ChatRightInInput,
+    ChannelTypeInput,
+    ChannelTypeResponse,
+    ChannelType
 )
 from ....models.user import User
-from ....crud.chat_channel import create_channels, channel_right
+from ....crud.chat_channel import (
+    create_channels,
+    channel_right,
+    channel_type
+)
 
 router = APIRouter()
 
@@ -75,3 +82,29 @@ async def change_channel_right(
         user.telegram_auth_key
     )
     return inchat
+
+
+@router.post(
+    '/change_channel_type',
+    tags=['channel'],
+    response_model=ChannelTypeResponse,
+    status_code=HTTP_200_OK
+)
+async def change_channel_type(
+    _type: ChannelTypeInput,
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    if not user.is_confirm:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail='unauthorize user'
+        )
+    if user.role != 'admin':
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail='you don`t have permission'
+        )
+    res = await channel_type(db, _type, user.telegram_auth_key)
+
+    return ChannelTypeResponse(type=ChannelType(**res.dict()))

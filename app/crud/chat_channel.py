@@ -4,9 +4,14 @@ from ..models.chat_channel import (
     ChannelInCreate,
     ChannelInDB,
     ChatRightInInput,
-    ChatRightBase
+    ChatRightBase,
+    ChannelTypeInput
 )
-from ..utils.telegram.chat_channel import createChannel, channelRights
+from ..utils.telegram.chat_channel import (
+    createChannel,
+    channelRights,
+    changeChannelType
+)
 
 
 async def create_channels(
@@ -34,3 +39,14 @@ async def channel_right(
     await channelRights(auth_key, Inright)
 
     return res
+
+
+async def channel_type(
+    conn: AsyncIOMotorClient,
+    type: ChannelTypeInput,
+    auth_key: str
+)-> ChatRightInInput:
+    InType = ChannelTypeInput(**type.dict())
+    await changeChannelType(auth_key, type)
+
+    return InType

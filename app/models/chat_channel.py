@@ -50,4 +50,21 @@ class ChatRightInInput(ChatRightBase):
 
 
 # class ChatRightInResponse(BaseModel):
-#     right = ChatRight
+#     right: ChatRight
+
+
+class ChannelTypeBase(BaseModel):
+    channel_id: int
+    channel_name: str
+
+
+class ChannelTypeInput(ChannelTypeBase):
+    pass
+
+
+class ChannelType(ChannelTypeBase):
+    pass
+
+
+class ChannelTypeResponse(BaseModel):
+    type: ChannelType

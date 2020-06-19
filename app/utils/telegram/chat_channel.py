@@ -3,32 +3,37 @@ from fastapi import HTTPException
 from telethon.sync import TelegramClient
 from telethon.tl.types import ChatAdminRights
 from telethon.errors import (
-    ChatTitleEmptyError,
-    UserRestrictedError,
     AdminsTooMuchError,
-    AdminRankEmojiNotAllowedError,
     AdminRankInvalidError,
+    AdminRankEmojiNotAllowedError,
     BotChannelsNaError,
     ChannelInvalidError,
-    ChatAdminInviteRequiredError,
+    ChannelsAdminPublicTooMuchError,
+    ChatTitleEmptyError,
     ChatAdminRequiredError,
+    ChatAdminInviteRequiredError,
     FreshChangeAdminsForbiddenError,
     RightForbiddenError,
     UserCreatorError,
     UserIdInvalidError,
+    UserRestrictedError,
     UserNotMutualContactError,
-    UserPrivacyRestrictedError
+    UserPrivacyRestrictedError,
+    UsernameInvalidError,
+    UsernameOccupiedError
 )
 from telethon.tl.functions.channels import (
     EditAdminRequest,
-    CreateChannelRequest
+    CreateChannelRequest,
+    CheckUsernameRequest,
+    UpdateUsernameRequest
 )
 from telethon.sessions import StringSession
 from telethon import types
 
 from ...core.config import api_id, api_hash
 
-from .entitiy import get_list_entity
+from .entitiy import get_list_entity, get_entity
 
 
 async def createChannel(auth_key, dbchannel):
@@ -178,4 +183,58 @@ async def channelRights(auth_key, dbright):
             status_code=400,
             detail="something went wrong")
 
-# 1474787884, 1266629372
+
+async def changeChannelType(auth_key, type):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+    try:
+        await client.connect()
+    except OSError:
+        raise HTTPException(status_code=400, detail="Failed to connect")
+    channel = await get_entity(type.channel_id, client)
+
+    try:
+        checkResult = await client(CheckUsernameRequest(
+            channel,
+            username=type.channel_name
+        ))
+        if checkResult:
+            await client(UpdateUsernameRequest(
+                channel,
+                username=type.channel_name
+            ))
+
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Your name is error or already use"
+            )
+
+    except ChannelsAdminPublicTooMuchError:
+        raise HTTPException(
+            status_code=400,
+            detail="You're admin of too many public channels,\
+                make some channels private to change the username of this channel.")  # noqa: E501
+
+    except UserIdInvalidError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid object ID for a user. Make sure to pass the right types,\
+                for instance making sure that the request is designed for users \
+                or otherwise look for a different one more suited.")  # noqa: E501
+
+    except ChatAdminRequiredError:
+        raise HTTPException(
+            status_code=400,
+            detail="Chat admin privileges are required to do that in the specified chat\
+                (for example, to send a message in a channel which is not yours),\
+                or invalid permissions used for the channel or group.")  # noqa: E501
+
+    except UsernameInvalidError:
+        raise HTTPException(
+            status_code=400,
+            detail='Nobody is using this username, or the username is unacceptable')  # noqa: E501
+
+    except UsernameOccupiedError:
+        raise HTTPException(
+            status_code=400,
+            detail='The username is already taken.')

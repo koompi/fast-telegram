@@ -45,9 +45,9 @@ class ChatRightInInput(ChatRightBase):
     user: int
 
 
-class ChatRight(ChatRightBase):
-    pass
+# class ChatRight(ChatRightBase):
+#     pass
 
 
-class ChatRightInResponse(BaseModel):
-    right = ChatRight
+# class ChatRightInResponse(BaseModel):
+#     right = ChatRight

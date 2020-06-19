@@ -14,8 +14,8 @@ async def upload_key(
     auth_key: str,
     password: str
 ):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
     try:
-        client = TelegramClient(StringSession(auth_key), api_id, api_hash)
         await client.connect()
     except OSError:
         raise HTTPException(status_code=400, detail='Failed to connect')
@@ -33,8 +33,8 @@ async def upload_encrypt_file(
     entity: int,
     n: int = 1
 ):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
     try:
-        client = TelegramClient(StringSession(auth_key), api_id, api_hash)
         await client.connect()
     except OSError:
         raise HTTPException(status_code=400, detail='Failed to connect')

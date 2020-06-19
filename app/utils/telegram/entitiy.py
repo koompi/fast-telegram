@@ -43,11 +43,11 @@ async def get_list_entity(
             entitys.append(entity)
     except PeerIdInvalidError:
         raise HTTPException(
-                status_code=400,
-                detail="Invalid Peer Id")
+            status_code=400,
+            detail="Invalid Peer Id")
     except Exception:
         raise HTTPException(
-                status_code=400,
-                detail="something went wrong")
+            status_code=400,
+            detail="something went wrong")
 
     return entitys

@@ -6,11 +6,12 @@ from fastapi import HTTPException
 
 
 async def get_username(auth_key):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+
     try:
-        client = TelegramClient(StringSession(auth_key), api_id, api_hash)
         await client.connect()
     except OSError:
-        raise HTTPException(status_code=400, detail='Failed to connect')
+        raise HTTPException(status_code=400, detail="Failed to connect")
 
     me = await client.get_me()
 

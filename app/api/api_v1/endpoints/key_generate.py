@@ -76,7 +76,20 @@ async def generate_server_token(
     tags=['keys'],
     status_code=HTTP_200_OK
 )
-async def get_all_ServerTokens(db: AsyncIOMotorClient = Depends(get_database)):
+async def get_all_ServerTokens(
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    if not user.is_confirm:
+        raise HTTPException(
+            status_code=403,
+            detail='Unconfirm user'
+        )
+    if user.role != 'admin' and user.role != 'uploader':
+        raise HTTPException(
+            status_code=401,
+            detail='you don`t have permission'
+            )
     server_tokens = await fetch_all_servertoken(db)
     return server_tokens
 
@@ -98,12 +111,7 @@ async def buy_key(
         )
 
     key, filename = await created_temp_Key(
-        db,
-        key.file_id,
-        key.expire,
-        user.salt
-    )
-
+        db, key.file_id, key.expire, user.salt)
     return {
         'filename': filename,
         'video key': key

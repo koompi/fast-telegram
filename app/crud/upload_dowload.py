@@ -22,7 +22,7 @@ async def upload_file(
     token_id: str,
     auth_key: str,
     password: str,
-    peer_id: int,
+    channel: str,
 ) -> UploadInDB:
 
     token = await _get_data_or_404(
@@ -42,7 +42,7 @@ async def upload_file(
         encrypt_key,
         upload.filename,
         upload.file_id,
-        peer_id
+        channel
     )
     upload.filename = str(upload.filename).split("/")[-1]
     upload.secret_key = create_token(encrypt_key)
@@ -95,7 +95,7 @@ async def dowload_files_(
 
     file_downloaded = await download_decrypt_file(
         auth_key,
-        download.peer_id,
+        download.channel,
         decrypt_key,
         download.file_id,
         filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"

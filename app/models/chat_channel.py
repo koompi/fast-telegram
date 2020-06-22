@@ -17,6 +17,7 @@ class ChannelInCreate(ChannelBase):
 
 class ChannelInDB(ChannelBase):
     channel_id: str = ""
+    public_name: str = ""
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
 
@@ -42,15 +43,7 @@ class ChatRightBase(BaseModel):
 
 class ChatRightInInput(ChatRightBase):
     channel: int
-    user: int
-
-
-# class ChatRight(ChatRightBase):
-#     pass
-
-
-# class ChatRightInResponse(BaseModel):
-#     right: ChatRight
+    user: str
 
 
 class ChannelTypeBase(BaseModel):

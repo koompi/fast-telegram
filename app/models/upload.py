@@ -26,7 +26,7 @@ class UploadInResponse(BaseModel):
 
 
 class UploadInCreate(UploadBase):
-    peer_id: int
+    channel: str
     token_id: str
     password: str = None
 
@@ -39,7 +39,7 @@ class DownloadBase(BaseModel):
 
 class DowloadInCreate(BaseModel):
     file_id: str
-    peer_id: int
+    channel: str
     password: str = None
     token_id: str = None
     secret_key: str = None

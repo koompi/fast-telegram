@@ -71,7 +71,7 @@ async def createChannel(auth_key, dbchannel):
     return result.updates[1].channel_id
 
 
-async def channelRights(auth_key, dbright):
+async def channelRights(auth_key, db):
     client = TelegramClient(StringSession(auth_key), api_id, api_hash)
 
     try:
@@ -79,18 +79,18 @@ async def channelRights(auth_key, dbright):
     except OSError:
         raise HTTPException(status_code=400, detail="Failed to connect")
 
-    entitys = await get_list_entity([dbright.channel, dbright.user], client)
+    entitys = await get_list_entity([db.channel, db.user], client)
 
     try:
         rights = ChatAdminRights(
-            post_messages=dbright.post_messages,
-            add_admins=dbright.add_admins,
-            invite_users=dbright.invite_users,
-            change_info=dbright.change_info,
-            ban_users=dbright.ban_users,
-            delete_messages=dbright.delete_messages,
-            pin_messages=dbright.pin_messages,
-            edit_messages=dbright.edit_messages,
+            post_messages=db.post_messages,
+            add_admins=db.add_admins,
+            invite_users=db.invite_users,
+            change_info=db.change_info,
+            ban_users=db.ban_users,
+            delete_messages=db.delete_messages,
+            pin_messages=db.pin_messages,
+            edit_messages=db.edit_messages,
         )
 
         await client(EditAdminRequest(

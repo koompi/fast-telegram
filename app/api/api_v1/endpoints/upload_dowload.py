@@ -64,7 +64,7 @@ async def uploads_new_file(
                     file.token_id,
                     user.telegram_auth_key,
                     file.password,
-                    file.peer_id
+                    file.channel
                 )
     return UploadInResponse(upload=dbuploader)
 
@@ -87,7 +87,7 @@ async def dowload_files(
     dowload = DowloadInCreate(
         file_id=file.file_id,
         password=file.password,
-        peer_id=file.peer_id,
+        channel=file.channel,
         token_id=file.token_id,
         secret_key=file.secret_key
     )

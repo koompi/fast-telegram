@@ -15,20 +15,21 @@ from ....models.chat_channel import (
     ChatRightInInput,
     ChannelTypeInput,
     ChannelTypeResponse,
-    ChannelType
+    ChannelType,
 )
 from ....models.user import User
 from ....crud.chat_channel import (
     create_channels,
     channel_right,
-    channel_type
+    channel_type,
+    assign_role
 )
 
 router = APIRouter()
 
 
 @router.post(
-    '/create_chaneel',
+    '/create_channel',
     response_model=ChannelInResponse,
     tags=['channel'],
     status_code=HTTP_200_OK
@@ -108,3 +109,34 @@ async def change_channel_type(
     res = await channel_type(db, _type, user.telegram_auth_key)
 
     return ChannelTypeResponse(type=ChannelType(**res.dict()))
+
+
+@router.post(
+    '/assign_uploader',
+    tags=['admin'],
+    status_code=HTTP_200_OK
+)
+async def assign_uploder(
+    right: ChatRightInInput,
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    if not user.is_confirm:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail='unauthorize user'
+        )
+    if user.role != 'admin':
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail='you don`t have permission'
+        )
+    await assign_role(
+        db,
+        right,
+        user.telegram_auth_key,
+    )
+    return {
+        'username': right.user,
+        'message': 'assign to be uploader success'
+    }

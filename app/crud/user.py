@@ -28,6 +28,16 @@ async def get_user(conn: AsyncIOMotorClient, phone: str) -> UserInDB:
         return UserInDB(**row)
 
 
+async def get_user_by_username(
+    conn: AsyncIOMotorClient,
+    username: str
+) -> UserInDB:
+    row = await conn[database_name][users_collection_name] \
+        .find_one({'username': username})
+    if row:
+        return UserInDB(**row)
+
+
 async def create_user(
     conn: AsyncIOMotorClient,
     user: UserInCreate

@@ -7,7 +7,7 @@ from ..core.config import (
     server_token_collection_name
 )
 from ..models.upload import (
-    UploadInDB, DownloadBase
+    UploadInDB, DownloadBase, Upload
     )
 from .get_by_id import _get_data_or_404
 from ..core.security import decrypt_token, create_token
@@ -117,3 +117,13 @@ async def created_temp_Key(
     key = temp_key(encrypt_key, salt, expire)
 
     return key, row['filename']
+
+
+async def get_all_file(
+    conn: AsyncIOMotorClient
+):
+    files = []
+    rows = conn[database_name][upload_collection_name].find()
+    async for row in rows:
+        files.append(Upload(**row))
+    return files

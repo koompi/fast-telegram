@@ -8,12 +8,14 @@ from ....models.upload import (
     UploadInCreate,
     UploadInDB,
     UploadInResponse,
-    DowloadInCreate
+    DowloadInCreate,
     )
 from ....models.user import User
 from ....core.security import create_token
 
-from ....crud.upload_dowload import upload_file, dowload_files_
+from ....crud.upload_dowload import (
+    upload_file, dowload_files_, get_all_file
+)
 
 from starlette.status import (
     HTTP_403_FORBIDDEN,
@@ -101,3 +103,21 @@ async def dowload_files(
         'message': f'dowload {doc_download} success',
         'file-location': dir
         }
+
+
+@router.get(
+    '/get_all_file',
+    tags=['files'],
+    status_code=200
+)
+async def get_all_files(
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    if not user.is_confirm:
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail='unauthorize user'
+        )
+    files = await get_all_file(db)
+    return files

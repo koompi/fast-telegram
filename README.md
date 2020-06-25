@@ -25,16 +25,16 @@ Create Telegram Api_Hash and Api_Id :
 Install the dependencies and create env filw
   - First create .env file
 	  - example
-			  - API_ID = API_ID = xxxxxxx  
-			  - API_HASH = 'xxxxxxxxxxxxxxxxxxxxxx'
-			  - MONGO_URL = '{Your Mongo db url}'
-			  - MAX_CONNECTIONS_COUNT=15
-			  - MIN_CONNECTIONS_COUNT=10
-			  - PROJECT_NAME = Fast-Telegram
-			  - SECRET_KEY =  ' your very secret key '
-			  - SALT = 'similar to secret key ' 
-			  - ALGORITHM = 'HS256'   
-			  - ALLOWED_HOSTS='"127.0.0.1", "localhost"'
+		- API_ID = API_ID = xxxxxxx  
+		- API_HASH = 'xxxxxxxxxxxxxxxxxxxxxx'
+		- MONGO_URL = '{Your Mongo db url}'
+		- MAX_CONNECTIONS_COUNT=15
+		- MIN_CONNECTIONS_COUNT=10
+		- PROJECT_NAME = Fast-Telegram
+		- SECRET_KEY =  ' your very secret key '
+		- SALT = 'similar to secret key ' 
+		- ALGORITHM = 'HS256'   
+		- ALLOWED_HOSTS='"127.0.0.1", "localhost"'
 ```sh
  $ pipenv install -r requirements.txt (install module that we need for this project)
  $ uvicorn main:app --reload (use to run fast api app )

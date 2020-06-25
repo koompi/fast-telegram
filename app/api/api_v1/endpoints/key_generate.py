@@ -28,6 +28,12 @@ async def generate_new_key(
 ):
     if not user.is_confirm:
         raise HTTPException(status_code=400, detail='Unconfirm user')
+    if user.role != 'admin' and user.role != 'uploader':
+        raise HTTPException(
+            status_code=401,
+            detail='you don`t have permission'
+            )
+
     if user.is_key is False or gen.force_gen is True:
         await upload_key(user.telegram_auth_key, gen.password)
         await exit_key(db, user.username)
@@ -38,7 +44,7 @@ async def generate_new_key(
         )
 
 
-@router.post(
+@router.get(
     '/generate_token',
     response_model=ServerTokenBase,
     tags=['admin'],

@@ -66,7 +66,7 @@ async def update_current_user(
         )
 
 
-@router.put('/resend', tags=['users'], status_code=HTTP_200_OK)
+@router.get('/resend', tags=['users'], status_code=HTTP_200_OK)
 async def resend(
     user: User = Depends(get_current_user_authorizer()),
     db: AsyncIOMotorClient = Depends(get_database)

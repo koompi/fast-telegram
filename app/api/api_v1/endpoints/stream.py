@@ -22,7 +22,7 @@ router = APIRouter()
 
 @router.post(
     '/streaming',
-    tags=['downloads'],
+    tags=['stream'],
 )
 async def stream_downloads(
     download: DowloadInCreate,

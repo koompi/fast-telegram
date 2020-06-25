@@ -44,11 +44,11 @@ async def create_channel(
             status_code=HTTP_401_UNAUTHORIZED,
             detail='unauthorize user'
         )
-    if user.role != 'admin':
+    if user.role != 'admin' and user.role != 'uploader':
         raise HTTPException(
-            status_code=HTTP_403_FORBIDDEN,
+            status_code=HTTP_401_UNAUTHORIZED,
             detail='you don`t have permission'
-        )
+            )
     dbchannel = await create_channels(
         db,
         channel,
@@ -69,14 +69,14 @@ async def change_channel_right(
 ):
     if not user.is_confirm:
         raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED,
+            status_code=HTTP_403_FORBIDDEN,
             detail='unauthorize user'
         )
-    if user.role != 'admin':
+    if user.role != 'admin' and user.role != 'uploader':
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,
             detail='you don`t have permission'
-        )
+            )
     inchat = await channel_right(
         db,
         right,
@@ -101,11 +101,11 @@ async def change_channel_type(
             status_code=HTTP_401_UNAUTHORIZED,
             detail='unauthorize user'
         )
-    if user.role != 'admin':
+    if user.role != 'admin' and user.role != 'uploader':
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,
             detail='you don`t have permission'
-        )
+            )
     res = await channel_type(db, _type, user.telegram_auth_key)
 
     return ChannelTypeResponse(type=ChannelType(**res.dict()))
@@ -126,11 +126,11 @@ async def assign_uploder(
             status_code=HTTP_401_UNAUTHORIZED,
             detail='unauthorize user'
         )
-    if user.role != 'admin':
+    if user.role != 'admin' and user.role != 'uploader':
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,
             detail='you don`t have permission'
-        )
+            )
     await assign_role(
         db,
         right,

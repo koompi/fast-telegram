@@ -5,10 +5,10 @@ from datetime import datetime
 class ChannelBase(BaseModel):
     channel_name: str
     about: str
-    megagroup: bool = None
-    address: str = False
-    lat: float = False
-    long: float = False
+    megagroup: bool = False
+    address: str = None
+    lat: float = None
+    long: float = None
 
 
 class ChannelInCreate(ChannelBase):
@@ -42,12 +42,12 @@ class ChatRightBase(BaseModel):
 
 
 class ChatRightInInput(ChatRightBase):
-    channel: int
+    channel: str
     user: str
 
 
 class ChannelTypeBase(BaseModel):
-    channel_id: int
+    channel_id: str
     channel_name: str
 
 

@@ -112,7 +112,7 @@ Install the dependencies and create env filw
 	    | ------ | ------ | ------ | ------ | ------ |
 	    | channel_name | True | String ||your channel name you want to create| 
 	    | about | True | String | |detail about your channel| 
-	    | megagroup | False | Boolen | False |If It is Trur became channel with limit member| 
+	    | megagroup | False | Boolen | None |If It is Trur became channel with limit member| 
 	    | address | False | String | None |your address| 
 	    | lat | False | Float | None |your  Latitude| 
 	    | long | False | Float | None |your Longitude| 

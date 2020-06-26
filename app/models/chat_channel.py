@@ -1,14 +1,15 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 
 class ChannelBase(BaseModel):
     channel_name: str
     about: str
-    megagroup: bool = False
+    megagroup: Optional[bool] = False
     address: str = None
-    lat: float = None
-    long: float = None
+    lat: Optional[float] = None
+    long: Optional[float] = None
 
 
 class ChannelInCreate(ChannelBase):
@@ -32,13 +33,13 @@ class ChannelInResponse(BaseModel):
 
 class ChatRightBase(BaseModel):
     post_messages: bool = True
-    add_admins: bool = None
-    invite_users: bool = None
-    change_info: bool = None
-    ban_users: bool = None
-    delete_messages: bool = None
-    pin_messages: bool = None
-    edit_messages: bool = None
+    add_admins: Optional[bool] = None
+    invite_users: Optional[bool] = None
+    change_info: Optional[bool] = None
+    ban_users: Optional[bool] = None
+    delete_messages: Optional[bool] = None
+    pin_messages: Optional[bool] = None
+    edit_messages: Optional[bool] = None
 
 
 class ChatRightInInput(ChatRightBase):

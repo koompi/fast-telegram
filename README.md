@@ -37,7 +37,7 @@ Install the dependencies and create env filw
 		- ALLOWED_HOSTS='"127.0.0.1", "localhost"'
 ```sh
  $ pipenv install -r requirements.txt (install module that we need for this project)
- $ uvicorn main:app --reload (use to run fast api app )
+ $ uvicorn app.main:app --reload (use to run fast api app )
 ```
 - And go to [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc) 
 	* To look into all route in api

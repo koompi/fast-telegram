@@ -30,5 +30,3 @@ async def get_dialogs(
 
     res = await get_all_dialogs(user.telegram_auth_key, dialog)
     return res
-
-

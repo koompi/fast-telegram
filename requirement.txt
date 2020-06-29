@@ -5,7 +5,10 @@ pyjwt
 uvicorn
 bcrypt
 cryptography
+databases
 passlib
 pydantic
 python-multipart
 motor
+pydantic[email]
+telethon

@@ -29,83 +29,85 @@ async def get_all_messages(auth_key, msg):
         from_user=msg.from_user,
         ids=msg.ids
     ):
-        try:
-            user = await client.get_entity(message.from_id)
-            if user.first_name is None:
-                user.first_name = ""
-            elif user.last_name is None:
-                user.last_name = ""
-            from_user = f"{user.first_name} {user.last_name}"
-        except TypeError:
-            from_user = ""
+        if message.text is not None:
+            try:
+                user = await client.get_entity(message.from_id)
+                if user.first_name is None:
+                    user.first_name = ""
+                elif user.last_name is None:
+                    user.last_name = ""
+                from_user = f"{user.first_name} {user.last_name}"
+            except TypeError:
+                from_user = ""
 
-        if message.geo:
-            text = "geo type (unsupport)"
-        elif message.venue:
-            text = "venue type (unsupport)"
-        elif message.invoice:
-            text = "invoice type (unsupport)"
-        elif message.poll:
-            text = "poll type (unsupport)"
-        elif message.game:
-            text = "game type (unsupport)"
-        elif message.web_preview:
-            text = message.message
-        elif message.contact:
-            phone_number = message.contact.phone_number
-            first_name = message.contact.first_name
-            last_name = message.contact.last_name
-            vcard = message.contact.vcard
-            user_id = message.contact.user_id
+            if message.geo:
+                text = "geo type (unsupport)"
+            elif message.venue:
+                text = "venue type (unsupport)"
+            elif message.invoice:
+                text = "invoice type (unsupport)"
+            elif message.poll:
+                text = "poll type (unsupport)"
+            elif message.game:
+                text = "game type (unsupport)"
+            elif message.web_preview:
+                text = message.message
+            elif message.contact:
+                phone_number = message.contact.phone_number
+                first_name = message.contact.first_name
+                last_name = message.contact.last_name
+                vcard = message.contact.vcard
+                user_id = message.contact.user_id
 
-            text = {
-                "message_id": user_id,
-                "phone_number": phone_number,
-                "name": f"{first_name} {last_name}",
-                "vcard":  vcard
-            }
-        elif message.sticker:
-            alt = (user.sticker.attributes)[1].alt
-            text = f"{alt} sticker"
-        elif message.gif:
-            text = "GIF"
-        elif message.photo:
-            text = "photo"
-        elif message.video_note or message.video:
-            text = "video"
-        elif message.voice:
-            text = "voice message"
-
-        elif message.audio:
-            text = "audio"
-
-        elif message.is_reply:
-            msg_reply = await client.get_messages(
-                entity, ids=message.reply_to_msg_id
-            )
-            replys.append((msg_reply.id, from_user, message.text))
-        elif message.text or user.raw_text:
-            text = message.text
-        else:
-            text = "unknow type message"
-        if message.is_reply:
-            text = ""
-        for reply in replys:
-            if reply[0] == message.id:
-                inline = {
-                    "from_user": reply[1],
-                    "message": reply[2]
+                text = {
+                    "message_id": user_id,
+                    "phone_number": phone_number,
+                    "name": f"{first_name} {last_name}",
+                    "vcard":  vcard
                 }
-                inline_replys.append(inline)
+            elif message.sticker:
+                alt = (user.sticker.attributes)[1].alt
+                text = f"{alt} sticker"
+            elif message.gif:
+                text = "GIF"
+            elif message.photo:
+                text = "photo"
+            elif message.video_note or message.video:
+                text = "video"
+            elif message.voice:
+                text = "voice message"
 
-        if inline_replys:
-            res_msg = {
-                "message_id": message.id,
-                "from_user": from_user,
-                "message": text,
-                "inline_replys": inline_replys
-            }
-            inline_replys = []
-            res.append(res_msg)
-    print(replys)
+            elif message.audio:
+                text = "audio"
+
+            elif message.is_reply:
+                msg_reply = await client.get_messages(
+                    entity, ids=message.reply_to_msg_id
+                )
+                replys.append((msg_reply.id, from_user, message.text))
+                # text = msg_reply.message
+            elif message.text or user.raw_text:
+                text = message.text
+            else:
+                text = "unknow type message"
+
+            for reply in replys:
+                if reply[0] == message.id:
+                    inline = {
+                        "from_user": reply[1],
+                        "message": reply[2]
+                    }
+                    inline_replys.append(inline)
+                    print(inline)
+                    print(reply[0], message.text)
+                    text = message.text
+            if inline_replys:
+                res_msg = {
+                    "message_id": message.id,
+                    "from_user": from_user,
+                    "message": text,
+                    "inline_replys": inline_replys
+                }
+                inline_replys = []
+                res.append(res_msg)
     return res

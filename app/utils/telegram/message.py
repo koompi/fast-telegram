@@ -88,14 +88,17 @@ async def get_all_messages(auth_key, msg):
             text = message.text
         else:
             text = "unknow type message"
-        if not message.is_reply:
-            for reply in replys:
-                if reply[0] == message.id:
-                    inline = {
-                        "from_user": reply[1],
-                        "message": reply[2]
-                    }
-                    inline_replys.append(inline)
+        if message.is_reply:
+            text = ""
+        for reply in replys:
+            if reply[0] == message.id:
+                inline = {
+                    "from_user": reply[1],
+                    "message": reply[2]
+                }
+                inline_replys.append(inline)
+
+        if inline_replys:
             res_msg = {
                 "message_id": message.id,
                 "from_user": from_user,
@@ -104,4 +107,5 @@ async def get_all_messages(auth_key, msg):
             }
             inline_replys = []
             res.append(res_msg)
+    print(replys)
     return res

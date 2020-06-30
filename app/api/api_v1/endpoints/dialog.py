@@ -4,8 +4,8 @@ from ....core.jwt import get_current_user_authorizer
 from ....db.mongodb import AsyncIOMotorClient, get_database
 
 from ....models.user import User
-from ....models.dialog import DialogInInput
-from ....utils.telegram.dialog import get_all_dialogs
+from ....models.dialog import DialogInInput, DeleteDialogs
+from ....utils.telegram.dialog import get_all_dialogs, delete_dialogs
 
 
 router = APIRouter()
@@ -30,3 +30,24 @@ async def get_dialogs(
 
     res = await get_all_dialogs(user.telegram_auth_key, dialog)
     return res
+
+
+@router.delete(
+    '/delete_dialogs',
+    tags=['dialogs'],
+    status_code=200
+)
+async def delete_dialog(
+    dialog: DeleteDialogs,
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    if not user.is_confirm:
+        raise HTTPException(
+            status_code=401,
+            detail='unauthorize user'
+        )
+
+    dels = await delete_dialogs(user.telegram_auth_key, dialog)
+
+    return {'message': f'{dels} have been delete'}

@@ -11,7 +11,6 @@ class DialogInInput(BaseModel):
     archived: Optional[bool] = False
 
 
-class DialogInResponse(BaseModel):
-    chat: str
-    from_user: str
-    message: str
+class DeleteDialogs(BaseModel):
+    entity: str
+    revoke: bool = False

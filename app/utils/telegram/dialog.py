@@ -33,12 +33,35 @@ async def get_all_dialogs(auth_key, dialog):
                        "msg": dialog.message.text}
         else:
             message = get_lastest_message(dialog.message)
+        try:
+            user = await client.get_entity(dialog.message.from_id)
+        except TypeError:
+            user.first_name = ""
+            user.last_name = ""
+        if user.first_name is None:
+            user.first_name = ""
+        elif user.last_name is None:
+            user.last_name = ""
 
-        entity = await get_entity(dialog.message.from_id, client)
         res = {
-            "name": dialog.name,
-            "from": entity.username,
+            "id": str(dialog.entity.id),
+            "chat_title": dialog.name,
+            "from_user": f"{user.first_name} {user.last_name}",
             "message": message,
         }
         dialogs.append(res)
     return dialogs
+
+
+async def delete_dialogs(auth_key, dialog):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+    try:
+        await client.connect()
+    except OSError:
+        raise HTTPException(status_code=400, detail="Failed to connect")
+    entity = await get_entity(dialog.entity, client)
+    await client.delete_dialog(entity, revoke=dialog.revoke)
+    try:
+        return entity.title
+    except AttributeError:
+        return entity.username

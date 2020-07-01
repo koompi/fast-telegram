@@ -40,56 +40,15 @@ async def get_all_messages(auth_key, msg):
             except TypeError:
                 from_user = ""
 
-            if message.geo:
-                text = "geo type (unsupport)"
-            elif message.venue:
-                text = "venue type (unsupport)"
-            elif message.invoice:
-                text = "invoice type (unsupport)"
-            elif message.poll:
-                text = "poll type (unsupport)"
-            elif message.game:
-                text = "game type (unsupport)"
-            elif message.web_preview:
-                text = message.message
-            elif message.contact:
-                phone_number = message.contact.phone_number
-                first_name = message.contact.first_name
-                last_name = message.contact.last_name
-                vcard = message.contact.vcard
-                user_id = message.contact.user_id
-
-                text = {
-                    "message_id": user_id,
-                    "phone_number": phone_number,
-                    "name": f"{first_name} {last_name}",
-                    "vcard":  vcard
-                }
-            elif message.sticker:
-                alt = (user.sticker.attributes)[1].alt
-                text = f"{alt} sticker"
-            elif message.gif:
-                text = "GIF"
-            elif message.photo:
-                text = "photo"
-            elif message.video_note or message.video:
-                text = "video"
-            elif message.voice:
-                text = "voice message"
-
-            elif message.audio:
-                text = "audio"
-
-            elif message.is_reply:
+            if message.is_reply:
+                text = await get_message_text(message)
                 msg_reply = await client.get_messages(
                     entity, ids=message.reply_to_msg_id
                 )
-                replys.append((msg_reply.id, from_user, message.text))
-                # text = msg_reply.message
-            elif message.text or user.raw_text:
-                text = message.text
+                replys.append((msg_reply.id, from_user, text))
+                text = ""
             else:
-                text = "unknow type message"
+                text = await get_message_text(message)
 
             for reply in replys:
                 if reply[0] == message.id:
@@ -98,10 +57,8 @@ async def get_all_messages(auth_key, msg):
                         "message": reply[2]
                     }
                     inline_replys.append(inline)
-                    print(inline)
-                    print(reply[0], message.text)
-                    text = message.text
-            if inline_replys:
+                    text = await get_message_text(message)
+            if inline_replys or text != "":
                 res_msg = {
                     "message_id": message.id,
                     "from_user": from_user,
@@ -111,3 +68,50 @@ async def get_all_messages(auth_key, msg):
                 inline_replys = []
                 res.append(res_msg)
     return res
+
+
+async def get_message_text(message):
+    try:
+        if message.geo:
+            text = "geo type (unsupport)"
+        elif message.venue:
+            text = "venue type (unsupport)"
+        elif message.invoice:
+            text = "invoice type (unsupport)"
+        elif message.poll:
+            text = "poll type (unsupport)"
+        elif message.game:
+            text = "game type (unsupport)"
+        elif message.web_preview:
+            text = message.message
+        elif message.contact:
+            phone_number = message.contact.phone_number
+            first_name = message.contact.first_name
+            last_name = message.contact.last_name
+            vcard = message.contact.vcard
+            user_id = message.contact.user_id
+
+            text = {
+                "message_id": user_id,
+                "phone_number": phone_number,
+                "name": f"{first_name} {last_name}",
+                "vcard":  vcard
+                }
+        elif message.sticker:
+            text = "sticker"
+        elif message.gif:
+            text = "GIF"
+        elif message.photo:
+            text = "photo"
+        elif message.video_note or message.video:
+            text = "video"
+        elif message.voice:
+            text = "voice message"
+        elif message.audio:
+            text = "audio"
+        elif message.text or message.raw_text:
+            text = message.text
+    except Exception:
+        raise HTTPException(status_code=400, detail="Get message Error")
+
+    return text

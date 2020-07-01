@@ -12,7 +12,8 @@ from ....core.jwt import create_access_token
 from ....crud.shortcuts import check_free_phone_and_email
 from ....crud.user import create_user, get_user_by_email
 from ....db.mongodb import AsyncIOMotorClient, get_database
-from ....models.user import User, UserInCreate, UserInLogin, UserLogInResponse
+from ....models.user import UserInCreate, UserInLogin
+# from ....models.user import UserLogInResponse, User
 
 
 router = APIRouter()
@@ -20,7 +21,7 @@ router = APIRouter()
 
 @router.post(
     '/users/login',
-    response_model=UserLogInResponse,
+    # response_model=UserLogInResponse,
     tags=['authentication'],
     status_code=HTTP_200_OK
 )
@@ -39,12 +40,13 @@ async def login(
         data={'phone': dbuser.phone},
         expires_delta=access_token_expires
         )
-    return UserLogInResponse(user=User(**dbuser.dict(), **{'token': token}))
+    # return UserLogInResponse(user=User(**dbuser.dict(), **{'token': token}))
+    return {'token': token}
 
 
 @router.post(
     '/users',
-    response_model=UserLogInResponse,
+    # response_model=UserLogInResponse,
     tags=['authentication'],
     status_code=HTTP_201_CREATED
 )
@@ -74,5 +76,6 @@ async def register(
                 data={'phone': dbuser.phone},
                 expires_delta=access_token_expires
             )
-            return UserLogInResponse(
-                user=User(**dbuser.dict(), **{'token': token}))
+            # return UserLogInResponse(
+            #     user=User(**dbuser.dict(), **{'token': token}))
+            return {'token': token}

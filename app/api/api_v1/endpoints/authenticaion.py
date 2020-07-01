@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Depends
 from starlette.exceptions import HTTPException
 from starlette.status import (
     HTTP_201_CREATED,
@@ -26,7 +26,7 @@ router = APIRouter()
     status_code=HTTP_200_OK
 )
 async def login(
-    user: UserInLogin = Body(..., embed = True),
+    user: UserInLogin,
     db: AsyncIOMotorClient = Depends(get_database)
 ):
     dbuser = await get_user_by_email(db, user.email)
@@ -51,7 +51,7 @@ async def login(
     status_code=HTTP_201_CREATED
 )
 async def register(
-    user: UserInCreate = Body(..., embed = True),
+    user: UserInCreate,
     db: AsyncIOMotorClient = Depends(get_database)
 ):
     await check_free_phone_and_email(

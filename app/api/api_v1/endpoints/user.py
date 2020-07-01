@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from ....core.jwt import get_current_user_authorizer
 from ....crud.shortcuts import check_free_phone_and_email
@@ -46,7 +46,7 @@ async def retrieve_current_user(
     status_code=HTTP_200_OK,
     )
 async def update_current_user(
-    user: UserInUpdate = Body(..., embed = True),
+    user: UserInUpdate,
     current_user: User = Depends(get_current_user_authorizer()),
     db: AsyncIOMotorClient = Depends(get_database)
 ):

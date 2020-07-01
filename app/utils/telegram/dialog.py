@@ -49,6 +49,8 @@ async def get_all_dialogs(auth_key, dialog):
             "from_user": f"{user.first_name} {user.last_name}",
             "message": message,
         }
+        print(dialog)
+        print("*"*10)
         dialogs.append(res)
     return dialogs
 

@@ -49,7 +49,6 @@ async def get_all_messages(auth_key, msg):
                 text = ""
             else:
                 text = await get_message_text(message)
-
             for reply in replys:
                 if reply[0] == message.id:
                     inline = {
@@ -72,19 +71,7 @@ async def get_all_messages(auth_key, msg):
 
 async def get_message_text(message):
     try:
-        if message.geo:
-            text = "geo type (unsupport)"
-        elif message.venue:
-            text = "venue type (unsupport)"
-        elif message.invoice:
-            text = "invoice type (unsupport)"
-        elif message.poll:
-            text = "poll type (unsupport)"
-        elif message.game:
-            text = "game type (unsupport)"
-        elif message.web_preview:
-            text = message.message
-        elif message.contact:
+        if message.contact:
             phone_number = message.contact.phone_number
             first_name = message.contact.first_name
             last_name = message.contact.last_name
@@ -97,21 +84,39 @@ async def get_message_text(message):
                 "name": f"{first_name} {last_name}",
                 "vcard":  vcard
                 }
-        elif message.sticker:
-            text = "sticker"
-        elif message.gif:
-            text = "GIF"
-        elif message.photo:
-            text = "photo"
-        elif message.video_note or message.video:
-            text = "video"
-        elif message.voice:
-            text = "voice message"
-        elif message.audio:
-            text = "audio"
         elif message.text or message.raw_text:
             text = message.text
+        else:
+            text = None
     except Exception:
         raise HTTPException(status_code=400, detail="Get message Error")
-
     return text
+
+
+def get_file(message):
+    if message.geo:
+            file = "geo type (unsupport)"
+    elif message.venue:
+        file = "venue type (unsupport)"
+    elif message.invoice:
+        file = "invoice type (unsupport)"
+    elif message.poll:
+        file = "poll type (unsupport)"
+    elif message.game:
+        file = "game type (unsupport)"
+    elif message.web_preview:
+        file = message.message
+    elif message.sticker:
+        file = "sticker"
+    elif message.gif:
+        file = "GIF"
+    elif message.photo:
+        file = "photo"
+    elif message.video_note or message.video:
+        file = "video"
+    elif message.voice:
+        file = "voice message"
+    elif message.audio:
+        file = "audio"
+
+    return file

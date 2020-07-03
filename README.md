@@ -51,7 +51,6 @@ Install the dependencies and create env filw
 		```
 	*  |  Parameter | Requirent | DataType | Default|Detail |
 	    | ------ | ------ | ------ | ------ | ------ |
-	    | email | True | String ||your email Account | 
 	    | phone | True | String ||your phone number that register to telegram | 
 	    | password | True | String ||your password| 
 	    | force_sms | False | Bool |False |use to send sms to your phone number| 
@@ -80,7 +79,7 @@ Install the dependencies and create env filw
 	  ```
 	* |  Parameter | Requirent | DataType | Default|Detail |
 	    | ------ | ------ | ------ | ------ | ------ |
-	    | email | True | String ||your email Account | 
+	    | phone | True | String ||your phone number| 
 	    | password | True | String ||your password| 
 
 - About [http://127.0.0.1:8000/api/generate_key](http://127.0.0.1:8000/api/generate_key)

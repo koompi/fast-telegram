@@ -1,7 +1,8 @@
 from typing import Optional
 from datetime import datetime
 from enum import Enum
-from pydantic import EmailStr, BaseModel
+from pydantic import BaseModel
+# from pydantic import EmailStr
 
 from ..core.security import generate_salt, get_password_hash, verify_password
 from .rwmodel import RWModel
@@ -14,7 +15,7 @@ class UserRole(str, Enum):
 
 
 class UserBase(RWModel):
-    email: EmailStr
+    # email: EmailStr
     phone: str
     role: UserRole = UserRole.user
     is_confirm: bool = False
@@ -51,7 +52,7 @@ class UserInResponse(RWModel):
 
 
 class User2(BaseModel):
-    email: EmailStr
+    # email: EmailStr
     phone: str
     role: UserRole
     token: str
@@ -62,7 +63,7 @@ class UserLogInResponse(RWModel):
 
 
 class UserInLogin(RWModel):
-    email: EmailStr
+    phone: str
     password: str
 
 
@@ -72,8 +73,8 @@ class UserInCreate(UserInLogin):
 
 
 class UserInUpdate(RWModel):
-    email = None
-    email: Optional[EmailStr]
+    # email = None
+    # email: Optional[EmailStr]
     password = None
     password: Optional[str]
     phone: str = None

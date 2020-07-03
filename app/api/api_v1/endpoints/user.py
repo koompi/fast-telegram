@@ -52,12 +52,12 @@ async def update_current_user(
 ):
     if user.phone == current_user.phone:
         user.phone = None
-    else:
-        if user.email == current_user.email:
-            user.email = None
+    # else:
+    #     if user.email == current_user.email:
+    #         user.email = None
     await check_free_phone_and_email(
         db,
-        user.email,
+        # user.email,
         user.phone
     )
     dbuser = await update_user(db, current_user.phone, user)

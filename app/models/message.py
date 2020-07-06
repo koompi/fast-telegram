@@ -3,6 +3,10 @@ from datetime import datetime
 from typing import Optional, List
 
 
+class MessageInResponse(BaseModel):
+    id: int
+
+
 class GetMessage(BaseModel):
     entity: str
     limit: int = 10

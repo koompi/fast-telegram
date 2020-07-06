@@ -1,5 +1,6 @@
 from typing import List
-from telethon.tl.types import PeerUser, PeerChat, PeerChannel
+# from telethon.tl.types import PeerUser, PeerChat, PeerChannel
+from telethon.tl.types import InputPeerUser,  InputPeerChannel,  InputPeerChat
 from telethon.errors.rpcerrorlist import PeerIdInvalidError
 from telethon import TelegramClient
 
@@ -8,17 +9,27 @@ from fastapi import HTTPException
 
 async def get_entity(
     peer_id,
+    access_hash,
     client
 ):
 
     try:
         try:
-            entity = await client.get_entity(PeerUser(int(peer_id)))
+            entity = await client.get_entity(InputPeerUser(
+                int(peer_id),
+                access_hash=access_hash)
+            )
         except Exception:
             try:
-                entity = await client.get_entity(PeerChannel(int(peer_id)))
+                entity = await client.get_entity(InputPeerChannel(
+                    int(peer_id),
+                    access_hash=access_hash)
+                )
             except Exception:
-                entity = await client.get_entity(PeerChat(int(peer_id)))
+                entity = await client.get_entity(InputPeerChat(
+                    int(peer_id),
+                    access_hash=access_hash)
+                )
     except Exception:
         try:
             entity = await client.get_entity(peer_id)
@@ -29,20 +40,21 @@ async def get_entity(
 
 async def get_list_entity(
     peer_ids: List[str],
-    client: TelegramClient
+    client: TelegramClient,
+    access_hash
 ):
     entitys = []
     for peer_id in peer_ids:
         try:
             try:
-                entity = await client.get_entity(PeerUser(int(peer_id)))
+                entity = await client.get_entity(InputPeerUser(
+                    int(peer_id),
+                    access_hash=access_hash)
+                )
             except Exception:
-                try:
-                    entity = await client.get_entity(
-                        PeerChannel(int(peer_id)))
-                except Exception:
-                    entity = await client.get_entity(
-                        PeerChat(int(peer_id)))
+                entity = await client.get_entity(
+                    InputPeerChannel(int(peer_id)))
+
         except Exception:
             try:
                 entity = await client.get_entity(peer_id)

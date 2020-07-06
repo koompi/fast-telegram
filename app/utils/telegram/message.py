@@ -42,10 +42,6 @@ async def get_all_messages(auth_key, msg):
         if message.text is not None:
             try:
                 user = await client.get_entity(message.from_id)
-                if user.first_name is None:
-                    user.first_name = ""
-                elif user.last_name is None:
-                    user.last_name = ""
                 from_user = f"{user.first_name} {user.last_name}"
             except TypeError:
                 from_user = ""

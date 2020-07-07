@@ -22,7 +22,7 @@ Create Telegram Api_Hash and Api_Id :
   
 ## To Run This Python Code
 
-Install the dependencies and create env filw
+Install the dependencies and create env file
   - First create .env file
 	  - example
 		- API_ID = API_ID = xxxxxxx  
@@ -36,7 +36,7 @@ Install the dependencies and create env filw
 		- ALGORITHM = 'HS256'   
 		- ALLOWED_HOSTS='"127.0.0.1", "localhost"'
 ```sh
- $ pipenv install -r requirements.txt (install module that we need for this project)
+ $ pip install -r requirements.txt (install module that we need for this project)
  $ uvicorn app.main:app --reload (use to run fast api app )
 ```
 - And go to [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc) 

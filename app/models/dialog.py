@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, Type
+from typing import Optional, Any
 
 
 class ChatBase(BaseModel):
@@ -30,23 +30,17 @@ class ChannelBase(BaseModel):
     participants_count: int
 
 
-class Entity(BaseModel):
-    entity: Type
-
-
-class LastestMessage(BaseModel):
-    message_id: int
-    text: str
-    media: str = None
-    reply_to_msg_id: Optional[int]
+class NameOfUser(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
 
 
 class DialogInResponse(BaseModel):
     name: str
-    entity: Entity
     datetime: datetime
-    from_user: Optional[UserBase] = None
-    message: Optional[LastestMessage] = None
+    message: str
+    from_user: Optional[NameOfUser] = None
+    entity: Any
 
 
 class DialogInInput(BaseModel):

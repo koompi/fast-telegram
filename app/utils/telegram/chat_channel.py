@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
 from telethon.sync import TelegramClient
-from telethon.tl.types import ChatAdminRights
+from telethon.tl.types import ChatAdminRights, PeerChannel, InputPeerUser
 from telethon.errors import (
     AdminsTooMuchError,
     AdminRankInvalidError,
@@ -32,8 +32,6 @@ from telethon.sessions import StringSession
 from telethon import types
 
 from ...core.config import api_id, api_hash
-
-from .entitiy import get_list_entity, get_entity
 
 
 async def createChannel(auth_key, dbchannel):
@@ -79,8 +77,8 @@ async def channelRights(auth_key, db):
     except OSError:
         raise HTTPException(status_code=400, detail="Failed to connect")
 
-    entitys = await get_list_entity([db.channel, db.user], client)
-
+    ch = await client.get_entity(PeerChannel(db.channel))
+    user = await client.get_entity(InputPeerUser(db.user, db.user_hash))
     try:
         rights = ChatAdminRights(
             post_messages=db.post_messages,
@@ -94,8 +92,8 @@ async def channelRights(auth_key, db):
         )
 
         await client(EditAdminRequest(
-            entitys[0],
-            entitys[1],
+            ch,
+            user,
             rights,
             rank="member"
             ))
@@ -190,7 +188,8 @@ async def changeChannelType(auth_key, type):
         await client.connect()
     except OSError:
         raise HTTPException(status_code=400, detail="Failed to connect")
-    channel = await get_entity(type.channel_id, client)
+    # channel = await get_entity(type.channel_id, client)
+    channel = await client.get_entity(PeerChannel(type.channel_id))
 
     try:
         checkResult = await client(CheckUsernameRequest(

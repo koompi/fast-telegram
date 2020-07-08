@@ -24,8 +24,9 @@ async def create_channels(
     auth_key: str
 ) -> ChannelInDB:
     dbchannel = ChannelInDB(**channel.dict())
-    channel_id = await createChannel(auth_key, dbchannel)
+    channel_id, _hash = await createChannel(auth_key, dbchannel)
     dbchannel.channel_id = channel_id
+    dbchannel.Channel_hash = _hash
 
     await conn[database_name][channel_collection_name]\
         .insert_one(dbchannel.dict())

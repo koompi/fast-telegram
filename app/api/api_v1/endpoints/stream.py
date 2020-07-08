@@ -69,10 +69,17 @@ async def stream_downloads(
         except TypeError:
             raise HTTPException(status_code=400, detail="Need Password")
 
-    return StreamingResponse(stream_decrypt_file(
+    # return StreamingResponse(stream_decrypt_file(
+    #     user.telegram_auth_key,
+    #     download.channel,
+    #     decrypt_key,
+    #     download.file_id,
+    #     filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
+    # ))
+    return stream_decrypt_file(
         user.telegram_auth_key,
         download.channel,
         decrypt_key,
         download.file_id,
         filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
-    ))
+    )

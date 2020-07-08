@@ -44,7 +44,8 @@ class ChatRightBase(BaseModel):
 
 class ChatRightInInput(ChatRightBase):
     channel: str
-    user: str
+    user: int
+    user_hash: str
 
 
 class ChannelTypeBase(BaseModel):

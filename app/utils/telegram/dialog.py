@@ -5,10 +5,10 @@ from telethon.sessions import StringSession
 
 from ...core.config import api_id, api_hash
 from ...models.dialog import (
-    NameOfUser,
     DialogInResponse
 )
-from ..extra.message import get_lastest_message, get_info
+from ..extra.message import get_lastest_message
+from ..extra.get_info import get_info
 from .entitiy import get_entity
 
 
@@ -40,11 +40,11 @@ async def get_all_dialogs(auth_key, dialog):
         ignore_migrated=dialog.ignore_migrated,
         archived=dialog.archived
     ):
-        user = await client.get_entity(dialog.message.from_id)
-        from_user = NameOfUser(
-            first_name=user.first_name,
-            last_name=user.last_name
-        )
+        try:
+            user = await client.get_entity(dialog.message.from_id)
+        except Exception:
+            user.first_name = None
+
         entity = get_info(dialog)
         message = get_lastest_message(dialog.message)
 
@@ -52,10 +52,9 @@ async def get_all_dialogs(auth_key, dialog):
             name=dialog.name,
             datetime=dialog.date,
             message=message,
-            from_user=from_user,
+            from_user=user.first_name,
             entity=entity,
         )
         dialogs.append(res)
-        # print("*"*100)
-        # print(entity)
+
     return dialogs

@@ -31,6 +31,7 @@ async def upload_encrypt_file(
     filename: str,
     file_id: str,
     entity: int,
+    access_hash: str,
     n: int = 1
 ):
     client = TelegramClient(StringSession(auth_key), api_id, api_hash)
@@ -39,7 +40,7 @@ async def upload_encrypt_file(
     except OSError:
         raise HTTPException(status_code=400, detail='Failed to connect')
 
-    peer_id = await get_entity(entity, client)
+    peer_id = await get_entity(entity, access_hash, client)
 
     chucksize = create_chuck(filename)
     with open(filename, 'rb') as f:

@@ -64,7 +64,8 @@ async def uploads_new_file(
                     file.token_id,
                     user.telegram_auth_key,
                     file.password,
-                    file.channel
+                    file.channel,
+                    file.access_hash
                 )
     return UploadInResponse(upload=dbuploader)
 

@@ -9,7 +9,7 @@ class ChatBase(BaseModel):
 
 class UserBase(BaseModel):
     peer_id: int
-    access_hash: str
+    access_hash: int
 
 
 class ChannelBase(BaseModel):

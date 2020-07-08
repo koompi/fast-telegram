@@ -23,6 +23,7 @@ async def upload_file(
     auth_key: str,
     password: str,
     channel: str,
+    access_hash: str,
 ) -> UploadInDB:
 
     token = await _get_data_or_404(
@@ -42,7 +43,8 @@ async def upload_file(
         encrypt_key,
         upload.filename,
         upload.file_id,
-        channel
+        channel,
+        access_hash
     )
     upload.filename = str(upload.filename).split("/")[-1]
     upload.secret_key = create_token(encrypt_key)

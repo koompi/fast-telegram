@@ -26,7 +26,8 @@ class UploadInResponse(BaseModel):
 
 
 class UploadInCreate(UploadBase):
-    channel: str
+    channel: int
+    access_hash: int
     token_id: str
     password: str = None
 

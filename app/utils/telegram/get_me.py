@@ -14,5 +14,8 @@ async def get_username(auth_key):
         raise HTTPException(status_code=400, detail="Failed to connect")
 
     me = await client.get_me()
-
-    return me.username
+    if not me.username:
+        username = ""
+    else:
+        username = ""
+    return username

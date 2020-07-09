@@ -38,6 +38,10 @@ async def send_code_request(
         raise HTTPException(
             status_code=400,
             detail="The phone number is invalid")
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="something went wrong")
 
     except Exception:
         os.remove(f"{phone_number}.session")

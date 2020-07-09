@@ -189,9 +189,7 @@ async def get_message_text(message):
 def get_file(message):
     if message.invoice:
         file = "invoice type (unsupport)"
-    
-    elif message.web_preview:
-        file = message.message
+
     elif message.sticker:
         file = "sticker"
     elif message.gif:

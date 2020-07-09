@@ -14,12 +14,11 @@ app = FastAPI(title=PROJECT_NAME)
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=['*'],
+  allow_origins=['http://localhost:3000'],
   allow_credentials=True,
   allow_methods=['*'],
   allow_headers=['*']
 )
-
 
 app.add_event_handler('startup', connect_to_mongo)
 app.add_event_handler('shutdown', close_mongo_connection)

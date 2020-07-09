@@ -60,21 +60,25 @@ async def stream_downloads(
                 server_token_collection_name
                 )
             public_key = decrypt_token(token['server_token'].encode())
-        print(public_key)
+        elif user.role == 'user':
+            raise HTTPException(
+                    status_code=401,
+                    detail="Please use key"
+                )
 
-    #     try:
-    #         decrypt_key = create_encrypt_key(
-    #             None, public_key, salt=row['salt'])
-    #     except ValueError:
-    #         raise HTTPException(status_code=400, detail="Wrong Password")
-    #     except TypeError:
-    #         raise HTTPException(status_code=400, detail="Need Password")
+        try:
+            decrypt_key = create_encrypt_key(
+                None, public_key, salt=row['salt'])
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Wrong Password")
+        except TypeError:
+            raise HTTPException(status_code=400, detail="Need Password")
 
-    # return StreamingResponse(stream_decrypt_file(
-    #     user.telegram_auth_key,
-    #     download.channel,
-    #     download.access_hash,
-    #     decrypt_key,
-    #     download.file_id,
-    #     filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
-    # ))
+    return StreamingResponse(stream_decrypt_file(
+        user.telegram_auth_key,
+        download.channel,
+        download.access_hash,
+        decrypt_key,
+        download.file_id,
+        filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
+    ))

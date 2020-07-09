@@ -4,7 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 from .api.api_v1.api import router as api_router
-from .core.config import ALLOWED_HOSTS, API_V1_STR, PROJECT_NAME
+from .core.config import API_V1_STR, PROJECT_NAME
 from .core.errors import http_422_error_handler, http_error_handler
 from .db.mongodb_utils import close_mongo_connection, connect_to_mongo
 
@@ -12,13 +12,9 @@ from .db.mongodb_utils import close_mongo_connection, connect_to_mongo
 app = FastAPI(title=PROJECT_NAME)
 
 
-if not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ['*']
-
-
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=ALLOWED_HOSTS,
+  allow_origins=['*'],
   allow_credentials=True,
   allow_methods=['*'],
   allow_headers=['*']

@@ -52,11 +52,14 @@ class UserInResponse(RWModel):
 
 
 class User2(BaseModel):
+    # email: EmailStr
+    phone: str
+    role: UserRole
     token: str
 
 
 class UserLogInResponse(RWModel):
-    token: str
+    user: User2
 
 
 class UserInLogin(RWModel):

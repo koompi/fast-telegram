@@ -46,7 +46,6 @@ async def login(
 
 @router.post(
     '/users',
-    # response_model=UserLogInResponse,
     tags=['authentication'],
     status_code=HTTP_201_CREATED
 )
@@ -76,6 +75,4 @@ async def register(
                 data={'phone': dbuser.phone},
                 expires_delta=access_token_expires
             )
-            # return UserLogInResponse(
-            #     user=User(**dbuser.dict(), **{'token': token}))
             return {'token': token}

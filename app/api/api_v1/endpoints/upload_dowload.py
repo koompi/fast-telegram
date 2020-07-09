@@ -63,7 +63,6 @@ async def uploads_new_file(
                     upload,
                     file.token_id,
                     user.telegram_auth_key,
-                    file.password,
                     file.channel,
                     file.access_hash
                 )
@@ -87,10 +86,10 @@ async def dowload_files(
 
     dowload = DowloadInCreate(
         file_id=file.file_id,
-        password=file.password,
         channel=file.channel,
         token_id=file.token_id,
-        secret_key=file.secret_key
+        secret_key=file.secret_key,
+        access_hash=file.access_hash
     )
     doc_download, dir = await dowload_files_(
         db,

@@ -31,26 +31,15 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def generate_private_public_key(password):
+def generate_private_public_key():
     private_key = ec.generate_private_key(ec.SECP384R1(), default_backend())
     public_key = private_key.public_key()
 
-    if password is not None:
-        password = password.encode('UTF-8')
-
-        serialized_private_key = private_key.private_bytes(
-            encoding=(serialization.Encoding.PEM),
-            format=(serialization.PrivateFormat.PKCS8),
-            encryption_algorithm=(
-                serialization.BestAvailableEncryption(password))
-        )
-
-    else:
-        serialized_private_key = private_key.private_bytes(
-            encoding=(serialization.Encoding.PEM),
-            format=(serialization.PrivateFormat.PKCS8),
-            encryption_algorithm=(serialization.NoEncryption())
-        )
+    serialized_private_key = private_key.private_bytes(
+        encoding=(serialization.Encoding.PEM),
+        format=(serialization.PrivateFormat.PKCS8),
+        encryption_algorithm=(serialization.NoEncryption())
+    )
     serialized_public_key = public_key.public_bytes(
         encoding=(serialization.Encoding.PEM),
         format=(serialization.PublicFormat.SubjectPublicKeyInfo)
@@ -145,7 +134,7 @@ def decrypt_file(bytes, key):
     except InvalidToken:
         raise HTTPException(
             status_code=400,
-            detail="Invalid decrypt key"
+            detail="Invalid Key"
         )
     return data
 

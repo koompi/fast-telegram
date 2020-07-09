@@ -21,7 +21,6 @@ async def upload_file(
     upload: UploadInDB,
     token_id: str,
     auth_key: str,
-    password: str,
     channel: str,
     access_hash: str,
 ) -> UploadInDB:
@@ -30,13 +29,8 @@ async def upload_file(
         conn, token_id, database_name, server_token_collection_name)
     public_key = decrypt_token(token['server_token'].encode())
 
-    try:
-        encrypt_key = create_encrypt_key(
-            password, public_key, salt=upload.salt)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Wrong Password")
-    except TypeError:
-        raise HTTPException(status_code=400, detail="Need Password")
+    encrypt_key = create_encrypt_key(
+        None, public_key, salt=upload.salt)
 
     await upload_encrypt_file(
         auth_key,
@@ -89,7 +83,7 @@ async def dowload_files_(
 
         try:
             decrypt_key = create_encrypt_key(
-                download.password, public_key, salt=row['salt'])
+                None, public_key, salt=row['salt'])
         except ValueError:
             raise HTTPException(status_code=400, detail="Wrong Password")
         except TypeError:
@@ -98,6 +92,7 @@ async def dowload_files_(
     file_downloaded = await download_decrypt_file(
         auth_key,
         download.channel,
+        download.access_hash,
         decrypt_key,
         download.file_id,
         filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"

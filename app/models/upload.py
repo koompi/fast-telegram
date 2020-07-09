@@ -40,7 +40,7 @@ class DownloadBase(BaseModel):
 
 class DowloadInCreate(BaseModel):
     file_id: str
-    channel: str
-    password: str = None
+    channel: int
+    access_hash: int
     token_id: str = None
     secret_key: str = None

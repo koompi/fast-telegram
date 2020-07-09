@@ -13,18 +13,20 @@ from ..extra.diretory import remove_create
 async def download_decrypt_file(
     auth_key,
     entity,
+    access_hash,
     decrypt_key,
     file_id,
     filename,
     n=1
 ):
+    print(entity, access_hash)
     client = TelegramClient(StringSession(auth_key), api_id, api_hash)
     try:
         await client.connect()
     except OSError:
         raise HTTPException(status_code=400, detail="Failed to connect")
 
-    entity_id = await get_entity(entity, client)
+    entity_id = await get_entity(entity, access_hash, client)
     remove_create(file_id)
 
     while n <= 3:
@@ -55,10 +57,6 @@ async def download_decrypt_file(
                 except errors.FloodWaitError as e:
                     os.remove(file)
                     time.sleep(e.seconds)
-                except Exception:
-                    raise HTTPException(
-                        status_code=400,
-                        detail='someting went wrong')
             else:
                 raise HTTPException(
                     status_code=400,
@@ -75,6 +73,7 @@ async def download_decrypt_file(
 async def stream_decrypt_file(
     auth_key,
     entity,
+    access_hash,
     decrypt_key,
     file_id,
     filename,
@@ -86,7 +85,7 @@ async def stream_decrypt_file(
     except OSError:
         raise HTTPException(status_code=400, detail="Failed to connect")
 
-    entity_id = await get_entity(entity, client)
+    entity_id = await get_entity(entity, access_hash, client)
     remove_create(file_id)
 
     while n <= 3:
@@ -113,7 +112,3 @@ async def stream_decrypt_file(
                 except errors.FloodWaitError as e:
                     os.remove(file)
                     time.sleep(e.seconds)
-        for i in range(10):
-            n += 1
-            a = n + 10
-            yield a

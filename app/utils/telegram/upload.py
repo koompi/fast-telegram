@@ -12,7 +12,6 @@ from .entitiy import get_entity
 
 async def upload_key(
     auth_key: str,
-    password: str
 ):
     client = TelegramClient(StringSession(auth_key), api_id, api_hash)
     try:
@@ -20,7 +19,7 @@ async def upload_key(
     except OSError:
         raise HTTPException(status_code=400, detail='Failed to connect')
 
-    dir = generate_private_public_key(password)
+    dir = generate_private_public_key()
     for file in dir:
         await client.send_file('me', file=file)
 

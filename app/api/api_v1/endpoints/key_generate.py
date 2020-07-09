@@ -35,9 +35,9 @@ async def generate_new_key(
             )
 
     if user.is_key is False or gen.force_gen is True:
-        await upload_key(user.telegram_auth_key, gen.password)
-        await exit_key(db, user.username)
-        return 'Success generate private and public key.File sent to Telegram.'
+        await upload_key(user.telegram_auth_key)
+        await exit_key(db, user.phone)
+        return 'Success generate private and public key. File sent to Telegram'
     raise HTTPException(
         status_code=HTTP_403_FORBIDDEN,
         detail='your key is already exit'

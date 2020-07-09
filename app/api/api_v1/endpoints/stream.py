@@ -38,7 +38,7 @@ async def stream_downloads(
     row = await db[database_name][upload_collection_name]\
         .find_one({'file_id': download.file_id})
     if not row:
-        raise HTTPException(status_code=400, detail="download id not found")
+        raise HTTPException(status_code=400, detail="File id not found")
 
     if download.secret_key:
         decrypt_key = decrypt_temp_key(download.secret_key, user.salt)
@@ -60,26 +60,21 @@ async def stream_downloads(
                 server_token_collection_name
                 )
             public_key = decrypt_token(token['server_token'].encode())
+        print(public_key)
 
-        try:
-            decrypt_key = create_encrypt_key(
-                download.password, public_key, salt=row['salt'])
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Wrong Password")
-        except TypeError:
-            raise HTTPException(status_code=400, detail="Need Password")
+    #     try:
+    #         decrypt_key = create_encrypt_key(
+    #             None, public_key, salt=row['salt'])
+    #     except ValueError:
+    #         raise HTTPException(status_code=400, detail="Wrong Password")
+    #     except TypeError:
+    #         raise HTTPException(status_code=400, detail="Need Password")
 
     # return StreamingResponse(stream_decrypt_file(
     #     user.telegram_auth_key,
     #     download.channel,
+    #     download.access_hash,
     #     decrypt_key,
     #     download.file_id,
     #     filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
     # ))
-    return stream_decrypt_file(
-        user.telegram_auth_key,
-        download.channel,
-        decrypt_key,
-        download.file_id,
-        filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
-    )

@@ -5,10 +5,12 @@ from ....crud.shortcuts import check_free_phone_and_email
 from ....crud.user import update_user, confirm, resend_confirm_code
 from ....db.mongodb import AsyncIOMotorClient, get_database
 from ....models.user import (
-    User, UserInResponse,
-    UserInUpdate, ConfirmCode,
-    TelegramAuth, UserLogInResponse
-    )
+    User,
+    UserInResponse,
+    UserInUpdate,
+    ConfirmCode,
+    UserLogInResponse
+)
 from ....utils.telegram.auth import sign_in
 
 from starlette.status import (
@@ -52,12 +54,8 @@ async def update_current_user(
 ):
     if user.phone == current_user.phone:
         user.phone = None
-    # else:
-    #     if user.email == current_user.email:
-    #         user.email = None
     await check_free_phone_and_email(
         db,
-        # user.email,
         user.phone
     )
     dbuser = await update_user(db, current_user.phone, user)
@@ -76,12 +74,11 @@ async def resend(
         user.phone,
         force_sms=True
     )
-    return {'message': 'resend code to Telegram success'}
+    return {'message': 'Resend code to Telegram success'}
 
 
 @router.post(
     '/confirm',
-    response_model=TelegramAuth,
     tags=['users'],
     status_code=HTTP_202_ACCEPTED
     )
@@ -99,4 +96,4 @@ async def telegram_comfirm(
         )
 
     await confirm(db, user.phone, auth_key)
-    return TelegramAuth(telegram_auth_key=auth_key)
+    return {'message': 'Success'}

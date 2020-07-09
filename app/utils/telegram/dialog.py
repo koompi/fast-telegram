@@ -18,7 +18,7 @@ async def delete_dialogs(auth_key, dialog):
         await client.connect()
     except OSError:
         raise HTTPException(status_code=400, detail="Failed to connect")
-    entity = await get_entity(dialog.entity, client)
+    entity = await get_entity(dialog.entity, dialog.access_hash, client)
     await client.delete_dialog(entity, revoke=dialog.revoke)
     try:
         return entity.title

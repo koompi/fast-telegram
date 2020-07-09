@@ -34,5 +34,6 @@ class DialogInInput(BaseModel):
 
 
 class DeleteDialogs(BaseModel):
-    entity: str
+    entity: int
+    access_hash: int
     revoke: bool = False

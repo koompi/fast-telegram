@@ -13,7 +13,7 @@ from ....crud.shortcuts import check_free_phone_and_email
 from ....crud.user import create_user, get_user
 from ....db.mongodb import AsyncIOMotorClient, get_database
 from ....models.user import UserInCreate, UserInLogin
-# from ....models.user import UserLogInResponse, User
+from ....models.user import UserLogInResponse
 
 
 router = APIRouter()
@@ -21,7 +21,7 @@ router = APIRouter()
 
 @router.post(
     '/users/login',
-    # response_model=UserLogInResponse,
+    response_model=UserLogInResponse,
     tags=['authentication'],
     status_code=HTTP_200_OK
 )
@@ -40,13 +40,13 @@ async def login(
         data={'phone': dbuser.phone},
         expires_delta=access_token_expires
         )
-    # return UserLogInResponse(user=User(**dbuser.dict(), **{'token': token}))
-    return {'token': token}
+    return UserLogInResponse(token=token)
 
 
 @router.post(
     '/users',
     tags=['authentication'],
+    response_model=UserLogInResponse,
     status_code=HTTP_201_CREATED
 )
 async def register(
@@ -55,7 +55,6 @@ async def register(
 ):
     await check_free_phone_and_email(
         db,
-        # user.email,
         user.phone
     )
     async with await db.start_session() as s:
@@ -75,4 +74,4 @@ async def register(
                 data={'phone': dbuser.phone},
                 expires_delta=access_token_expires
             )
-            return {'token': token}
+            return UserLogInResponse(token=token)

@@ -1,10 +1,3 @@
-from ...models.dialog import (
-    UserBase,
-    ChannelBase,
-    ChatBase,
-)
-
-
 def get_lastest_message(dialog):
     if dialog.geo:
         message = "Location"
@@ -46,9 +39,9 @@ def get_lastest_message(dialog):
     elif dialog.audio:
         message = "audio"
 
-    elif dialog.text or dialog.raw_text:
-        message = dialog.text
+    elif dialog.raw_text:
+        message = dialog.raw_text
     else:
-        message = "unknow type message"
+        message = "unsupport message"
 
     return message

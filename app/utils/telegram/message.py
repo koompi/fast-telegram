@@ -11,9 +11,9 @@ from ...models.message import (
     Venue,
     Invoice,
     Message,
-    Poll,
-    PollAnswer,
-    PollAnswerVoters
+    Poll, PollAnswer, PollAnswerVoters,
+    Game,
+    WebPage
 )
 
 
@@ -24,7 +24,7 @@ async def get_all_messages(auth_key, msg):
     except OSError:
         raise HTTPException(status_code=400, detail="Failed to connect")
 
-    entity = await get_entity(msg.entity, client)
+    entity = await get_entity(msg.entity, msg.access_hash, client)
     res = []
     replys = []
     inline_replys = []
@@ -72,6 +72,11 @@ async def get_all_messages(auth_key, msg):
                 }
                 inline_replys = []
                 res.append(res_msg)
+            # s1 = message.web_preview.url
+            # s2 = message.text
+            # if s1 in s2:
+            #     s3 = s2.replace(s1, '')
+            print(message.web_preview)
     return res
 
 
@@ -101,18 +106,6 @@ async def get_message_text(message):
             long=message.geo.long,
             lat=message.geo.lat,
             access_hash=message.geo.access_hash
-        )
-    elif message.invoice:
-        invoice = message.invoice
-        text = Invoice(
-            title=invoice.title,
-            description=invoice.description,
-            currency=invoice.currency,
-            total_amount=invoice.total_amount,
-            start_param=invoice.start_param,
-            shipping_address_requested=invoice.shipping_address_requested,
-            test=invoice.test,
-            receipt_msg_id=invoice.receipt_msg_id
         )
     elif message.poll:
         poll = message.poll
@@ -150,12 +143,44 @@ async def get_message_text(message):
             recent_voters=poll.results.recent_voters,
             solution=poll.results.solution,
         )
-    elif message.text:
+    elif message.game:
+        text = Game(
+            id=message.game.id,
+            access_hash=message.game.access_hash,
+            short_name=message.game.short_name,
+            title=message.game.title,
+            descriptio=message.game.description
+        )
+    elif message.web_preview:
+        s1 = message.web_preview.url
+        s2 = message.text
+        if s1 in s2:
+            s3 = s2.replace(s1, '')
+        text = WebPage(
+            url=message.web_preview.url,
+            site_name=message.web_preview.site_name,
+            title=message.web_preview.title,
+            description=message.web_preview.description,
+            caption=s3[1:]
+        )
+    elif message.invoice:
+        invoice = message.invoice
+        text = Invoice(
+            title=invoice.title,
+            description=invoice.description,
+            currency=invoice.currency,
+            total_amount=invoice.total_amount,
+            start_param=invoice.start_param,
+            shipping_address_requested=invoice.shipping_address_requested,
+            test=invoice.test,
+            receipt_msg_id=invoice.receipt_msg_id
+        )
+    elif message.raw_text:
         text = Message(
-            text=message.text
+            text=message.raw_text
         )
     else:
-        text = None
+        text = "unsupport message"
     # except Exception:
     #     raise HTTPException(status_code=400, detail="Get message Error")
     return text
@@ -164,10 +189,7 @@ async def get_message_text(message):
 def get_file(message):
     if message.invoice:
         file = "invoice type (unsupport)"
-    elif message.poll:
-        file = "poll type (unsupport)"
-    elif message.game:
-        file = "game type (unsupport)"
+    
     elif message.web_preview:
         file = message.message
     elif message.sticker:

@@ -8,7 +8,8 @@ class MessageInResponse(BaseModel):
 
 
 class GetMessage(BaseModel):
-    entity: str
+    entity: int
+    access_hash: int
     limit: int = 10
     offset_date: Optional[datetime] = None
     max_id: Optional[int] = 0
@@ -20,10 +21,10 @@ class GetMessage(BaseModel):
 
 
 class Contact(BaseModel):
-    phone_number: str
-    first_name: str
-    last_name: str
-    vcard: str
+    phone_number: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    vcard: Optional[str] = None
     user_id: Optional[int]
 
 
@@ -34,25 +35,25 @@ class Geo(BaseModel):
 
 
 class Message(BaseModel):
-    text: str
+    text: Optional[str] = None
 
 
 class Venue(Geo):
-    title: str
-    address: str
-    provider: str
-    venue_id: str
-    venue_type: str
+    title: Optional[str] = None
+    address: Optional[str] = None
+    provider: Optional[str] = None
+    venue_id: Optional[str] = None
+    venue_type: Optional[str] = None
 
 
 class Invoice(BaseModel):
     title: str
-    description: str
-    currency: str
-    total_amount: Optional[int]
-    start_param: str
+    description: Optional[str] = None
+    currency: Optional[str] = None
+    total_amount: Optional[int] = None
+    start_param: Optional[str] = None
     shipping_address_requested:	bool = None
-    test: bool = None
+    test: Optional[bool] = None
     receipt_msg_id: Optional[int]
 
 
@@ -84,3 +85,21 @@ class Poll(BaseModel):
     recent_voters: Optional[int]
     solution: Optional[str]
     # # solution_entities: List[MessageEntity]
+
+
+class Game(BaseModel):
+    id: int
+    access_hash: Optional[int] = None
+    short_name: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    # photo: Photo
+    # document: Document
+
+
+class WebPage(BaseModel):
+    url: str
+    site_name: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    caption: Optional[str] = None

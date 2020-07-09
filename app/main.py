@@ -11,14 +11,16 @@ from .db.mongodb_utils import close_mongo_connection, connect_to_mongo
 
 app = FastAPI(title=PROJECT_NAME)
 
+origins = ['*']
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=['http://localhost:3000'],
+  allow_origins=origins,
   allow_credentials=True,
   allow_methods=['*'],
   allow_headers=['*']
 )
+
 
 app.add_event_handler('startup', connect_to_mongo)
 app.add_event_handler('shutdown', close_mongo_connection)

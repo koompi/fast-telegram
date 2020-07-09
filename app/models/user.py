@@ -25,10 +25,10 @@ class UserBase(RWModel):
 
 class UserInDB(UserBase):
     salt: str = ''
-    username: str = ''
-    hashed_password: str = ''
-    phone_code_hash: str = ''
-    telegram_auth_key: str = ''
+    username: Optional[str] = ''
+    hashed_password: Optional[str] = ''
+    phone_code_hash: Optional[str] = ''
+    telegram_auth_key: Optional[str] = ''
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
 

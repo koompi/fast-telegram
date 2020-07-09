@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from starlette.exceptions import HTTPException
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 from .api.api_v1.api import router as api_router

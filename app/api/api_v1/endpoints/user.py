@@ -88,7 +88,7 @@ async def telegram_comfirm(
     db: AsyncIOMotorClient = Depends(get_database)
 ):
     try:
-        auth_key = await sign_in(user.phone, code.code, user.phone_code_hash)
+        auth_key = 'await sign_in(user.phone, code.code, user.phone_code_hash)'
     except Exception:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,

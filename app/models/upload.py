@@ -10,12 +10,14 @@ class UploadInDB(UploadBase):
     file_id: str
     salt: str
     upload_token: str
+    upload_by: str
     secret_key: str = None
     uploaded_at: datetime = datetime.now()
 
 
 class Upload(UploadBase):
     file_id: str
+    upload_by: str
     uploaded_at: datetime
 
 

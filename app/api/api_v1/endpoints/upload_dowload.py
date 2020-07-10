@@ -54,7 +54,8 @@ async def uploads_new_file(
         salt=generate_salt(),
         file_id=uuid4().hex,
         filename=file.filename,
-        upload_token=token
+        upload_token=token,
+        upload_by=user.phone
     )
 
     dbuploader = await upload_file(

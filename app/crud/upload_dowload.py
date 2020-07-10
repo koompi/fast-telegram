@@ -60,7 +60,7 @@ async def dowload_files_(
         .find_one({'file_id': download.file_id})
     if not row:
         raise HTTPException(status_code=400, detail="File id not found")
-
+    print(row['phone'])
     # if download.secret_key:
     #     decrypt_key = decrypt_temp_key(download.secret_key, salt)
     # else:

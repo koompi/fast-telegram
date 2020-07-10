@@ -95,4 +95,4 @@ async def telegram_comfirm(
             detail='telegram login error'
         )
     await confirm(db, user.phone, auth_key)
-    return {'confirm': user.is_confirm}
+    return {'confirm': True}

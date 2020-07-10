@@ -25,7 +25,7 @@ class UserBase(RWModel):
 
 class UserInDB(UserBase):
     salt: str = ''
-    username: Optional[str] = None
+    # username: Optional[str] = None
     hashed_password: Optional[str] = ''
     phone_code_hash: Optional[str] = ''
     telegram_auth_key: Optional[str] = ''
@@ -44,7 +44,6 @@ class User(UserBase):
     token: str
     salt: str
     phone_code_hash: str
-    username: str
 
 
 class UserInResponse(RWModel):

@@ -5,7 +5,7 @@ from ..db.mongodb import AsyncIOMotorClient
 from ..core.config import database_name, users_collection_name
 from ..models.user import UserInCreate, UserInDB, UserInUpdate
 from ..utils.telegram.auth import send_code_request
-from ..utils.telegram.get_me import get_username
+# from ..utils.telegram.get_me import get_username
 from ..utils.extra.phone_format import clear_phone_format
 
 
@@ -77,7 +77,7 @@ async def confirm(conn: AsyncIOMotorClient, phone: str, auth_key: str):
     dbuser = await get_user(conn, phone)
     dbuser.telegram_auth_key = auth_key
     dbuser.is_confirm = True
-    dbuser.username = await get_username(auth_key)
+    # dbuser.username = await get_username(auth_key)
     await conn[database_name][users_collection_name]\
         .update_one({'phone': phone}, {'$set': dbuser.dict()})
 

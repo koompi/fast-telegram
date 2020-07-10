@@ -53,7 +53,7 @@ async def dowload_files_(
     download: DownloadBase,
     auth_key: str,
     role: str,
-    username: str,
+    phone: str,
     salt: str
 ):
     row = await conn[database_name][upload_collection_name] \
@@ -61,43 +61,43 @@ async def dowload_files_(
     if not row:
         raise HTTPException(status_code=400, detail="File id not found")
 
-    if download.secret_key:
-        decrypt_key = decrypt_temp_key(download.secret_key, salt)
-    else:
-        if role == 'admin':
-            public_key = decrypt_token(row['upload_token'].encode())
+    # if download.secret_key:
+    #     decrypt_key = decrypt_temp_key(download.secret_key, salt)
+    # else:
+    #     if role == 'admin':
+    #         public_key = decrypt_token(row['upload_token'].encode())
 
-        elif role == 'uploader':
-            if row['upload_by'] != username:
-                raise HTTPException(
-                    status_code=401,
-                    detail="You Don`t Have Permission"
-                )
-            token = await _get_data_or_404(
-                conn,
-                download.token_id,
-                database_name,
-                server_token_collection_name
-                )
-            public_key = decrypt_token(token['server_token'].encode())
+    #     elif role == 'uploader':
+    #         if row['phone'] != phone:
+    #             raise HTTPException(
+    #                 status_code=401,
+    #                 detail="You Don`t Have Permission"
+    #             )
+    #         token = await _get_data_or_404(
+    #             conn,
+    #             download.token_id,
+    #             database_name,
+    #             server_token_collection_name
+    #             )
+    #         public_key = decrypt_token(token['server_token'].encode())
 
-        try:
-            decrypt_key = create_encrypt_key(
-                None, public_key, salt=row['salt'])
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Wrong Password")
-        except TypeError:
-            raise HTTPException(status_code=400, detail="Need Password")
+    #     try:
+    #         decrypt_key = create_encrypt_key(
+    #             None, public_key, salt=row['salt'])
+    #     except ValueError:
+    #         raise HTTPException(status_code=400, detail="Wrong Password")
+    #     except TypeError:
+    #         raise HTTPException(status_code=400, detail="Need Password")
 
-    file_downloaded = await download_decrypt_file(
-        auth_key,
-        download.channel,
-        download.access_hash,
-        decrypt_key,
-        download.file_id,
-        filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
-    )
-    return row['filename'], file_downloaded
+    # file_downloaded = await download_decrypt_file(
+    #     auth_key,
+    #     download.channel,
+    #     download.access_hash,
+    #     decrypt_key,
+    #     download.file_id,
+    #     filename=f"{download.file_id}.{row['filename'].split('.')[-1]}"
+    # )
+    # return row['filename'], file_downloaded
 
 
 async def created_temp_Key(

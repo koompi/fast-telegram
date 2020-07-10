@@ -54,8 +54,7 @@ async def uploads_new_file(
         salt=generate_salt(),
         file_id=uuid4().hex,
         filename=file.filename,
-        upload_token=token,
-        upload_by=user.username,
+        upload_token=token
     )
 
     dbuploader = await upload_file(
@@ -96,7 +95,7 @@ async def dowload_files(
         dowload,
         auth_key=user.telegram_auth_key,
         role=user.role,
-        username=user.username,
+        phone=user.phone,
         salt=user.salt
     )
     return {

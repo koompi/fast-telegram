@@ -94,6 +94,5 @@ async def telegram_comfirm(
             status_code=HTTP_400_BAD_REQUEST,
             detail='telegram login error'
         )
-
     await confirm(db, user.phone, auth_key)
-    return {'message': 'Success'}
+    return {'confirm': user.is_confirm}

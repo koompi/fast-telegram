@@ -32,3 +32,9 @@ server_token_collection_name = 'server_token'
 upload_collection_name = 'upload'
 channel_collection_name = 'channel'
 database_name = 'TELEGRAM_DB'
+
+
+sticker_dir = "./documents/stickers/"
+image_type = "jpg"
+gif_dir = "./documents/gif/"
+git_type = "gif"

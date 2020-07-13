@@ -19,6 +19,8 @@ build/
 key/
 *.mp4
 *.png
+*.jpg
+*.gif
 develop-eggs/
 dist/
 downloads/

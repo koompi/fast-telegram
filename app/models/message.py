@@ -1,13 +1,17 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List, Type
+from typing import Optional, List, Any
 
 
-class MessageInResponse(BaseModel):
+class InlineMessage(BaseModel):
     id: int
     from_user: str
-    message: Type
+    message: Any
     date: Optional[datetime] = None
+
+
+class MessageInResponse(InlineMessage):
+    reply: Any = None
 
 
 class GetMessage(BaseModel):

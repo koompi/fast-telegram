@@ -5,6 +5,7 @@ from telethon.sessions import StringSession
 from .entitiy import get_entity
 from ..extra.message import get_message_text
 from ...core.config import api_id, api_hash
+from ...models.message import MessageInResponse, InlineMessage
 
 
 async def get_all_messages(auth_key, msg):
@@ -48,27 +49,28 @@ async def get_all_messages(auth_key, msg):
                     message.id,
                     message.date
                     ))
-                print(message.date)
                 text = ""
             else:
                 text = await get_message_text(message, client)
             for reply in replys:
                 if reply[0] == message.id:
-                    inline = {
-                        "id": reply[3],
-                        "from_user": reply[1],
-                        "message": reply[2],
-                        "date":reply[2]
-                    }
+                    inline = InlineMessage(
+                        id=reply[3],
+                        from_user=reply[1],
+                        message=reply[2],
+                        date=reply[4]
+                    )
                     inline_replys.append(inline)
                     text = await get_message_text(message, client)
             if inline_replys or text != "":
-                res_msg = {
-                    "message_id": message.id,
-                    "from_user": from_user,
-                    "message": text,
-                    "inline_replys": inline_replys
-                }
+                res_msg = MessageInResponse(
+                    id=message.id,
+                    from_user=from_user,
+                    message=text,
+                    date=message.date,
+                    reply=inline_replys
+                )
+                print(type(reply[4]))
                 inline_replys = []
                 res.append(res_msg)
     return res

@@ -1,10 +1,13 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Type
 
 
 class MessageInResponse(BaseModel):
     id: int
+    from_user: str
+    message: Type
+    date: Optional[datetime] = None
 
 
 class GetMessage(BaseModel):
@@ -103,3 +106,20 @@ class WebPage(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     caption: Optional[str] = None
+
+
+class Document(BaseModel):
+    file: str
+    caption: Optional[str] = None
+
+
+class DocumentVoice(Document):
+    duration: Optional[float] = 0
+
+
+class DocumentAudio(DocumentVoice):
+    filename: Optional[str] = None
+
+
+class DocumentVideo(DocumentAudio):
+    pass

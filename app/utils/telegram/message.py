@@ -41,15 +41,24 @@ async def get_all_messages(auth_key, msg):
                 msg_reply = await client.get_messages(
                     entity, ids=message.reply_to_msg_id
                 )
-                replys.append((msg_reply.id, from_user, text))
+                replys.append((
+                    msg_reply.id,
+                    from_user,
+                    text,
+                    message.id,
+                    message.date
+                    ))
+                print(message.date)
                 text = ""
             else:
                 text = await get_message_text(message, client)
             for reply in replys:
                 if reply[0] == message.id:
                     inline = {
+                        "id": reply[3],
                         "from_user": reply[1],
-                        "message": reply[2]
+                        "message": reply[2],
+                        "date":reply[2]
                     }
                     inline_replys.append(inline)
                     text = await get_message_text(message, client)

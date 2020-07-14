@@ -1,11 +1,13 @@
 import os
 from typing import List
+from fastapi import HTTPException
 from ..extra.is_exit import is_not_exit
 from ...core.config import (
-    sticker_dir,
-    image_type,
-    gif_dir,
-    git_type
+    sticker_dir, image_type, image_dir,
+    gif_dir, git_type,
+    voice_dir, voice_type,
+    audio_dir, audio_type,
+    video_dir, video_type
 )
 from ...models.message import (
     Contact,
@@ -15,7 +17,11 @@ from ...models.message import (
     Message,
     Poll, PollAnswer, PollAnswerVoters,
     Game,
-    WebPage
+    WebPage,
+    Document,
+    DocumentAudio,
+    DocumentVideo,
+    DocumentVoice
 )
 
 
@@ -121,7 +127,10 @@ async def get_message_text(message, client):
             with open(sticker, 'wb') as fd:
                 async for chunk in client.iter_download(message.sticker):
                     fd.write(chunk)
-        text = os.path.abspath(sticker)
+        text = Document(
+            file=os.path.abspath(sticker),
+            caption=message.message
+        )
 
     elif message.gif:
         id = message.gif.id
@@ -130,14 +139,70 @@ async def get_message_text(message, client):
             with open(gif, 'wb') as fd:
                 async for chunk in client.iter_download(message.gif):
                     fd.write(chunk)
-        text = os.path.abspath(gif)
+        text = Document(
+            file=os.path.abspath(gif),
+            caption=message.message
+        )
+
+    elif message.voice:
+        id = message.voice.id
+        voice = f"{voice_dir}{id}.{voice_type}"
+        if is_not_exit(voice_dir, voice, voice_type):
+            with open(voice, 'wb') as fd:
+                async for chunk in client.iter_download(message.voice):
+                    fd.write(chunk)
+        text = DocumentVoice(
+            file=os.path.abspath(voice),
+            caption=message.message,
+            duration=message.voice.attributes[0].duration
+        )
+
+    elif message.audio:
+        id = message.audio.id
+        audio = f"{audio_dir}{id}.{audio_type}"
+        file = os.path.abspath(audio)
+        if is_not_exit(audio_dir, audio, audio_type):
+            file = "audio"
+        text = DocumentAudio(
+            file=file,
+            filename=message.audio.attributes[1].file_name,
+            caption=message.message,
+            duration=message.audio.attributes[0].duration
+        )
+
+    elif message.video:
+        text = None
+        id = message.video.id
+        video = f"{video_dir}{id}.{video_type}"
+        file = os.path.abspath(video)
+        if is_not_exit(video_dir, video, video_type):
+            file = "video"
+        text = DocumentVideo(
+            file=file,
+            filename=message.video.attributes[1].file_name,
+            caption=message.message,
+            duration=message.video.attributes[0].duration
+        )
+
+    elif message.photo:
+        text = ""
+        id = message.photo.id
+        photo = f"{image_dir}{id}.{image_type}"
+        if is_not_exit(image_dir, photo, image_type):
+            with open(photo, 'wb') as fd:
+                async for chunk in client.iter_download(message.photo):
+                    fd.write(chunk)
+        text = Document(
+            file=os.path.abspath(photo),
+            caption=message.message
+        )
 
     elif message.raw_text:
         text = Message(
             text=message.raw_text
         )
     else:
-        text = "unsupport message"
+        text = ""
     # except Exception:
     #     raise HTTPException(status_code=400, detail="Get message Error")
     return text

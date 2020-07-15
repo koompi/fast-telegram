@@ -3,17 +3,6 @@ from datetime import datetime
 from typing import Optional, List, Any
 
 
-class InlineMessage(BaseModel):
-    id: int
-    from_user: str
-    message: Any
-    date: Optional[datetime] = None
-
-
-class MessageInResponse(InlineMessage):
-    reply: Any = None
-
-
 class GetMessage(BaseModel):
     entity: int
     access_hash: int
@@ -25,6 +14,26 @@ class GetMessage(BaseModel):
     from_user: Optional[str] = None
     ids: List[int] = None
     reverse: Optional[bool] = False
+
+
+class GetFileInput(BaseModel):
+    entity: int
+    access_hash: int
+    ids: List[int]
+
+
+# ------------------------------------------------------
+
+
+class InlineMessage(BaseModel):
+    id: int
+    from_user: str
+    message: Any
+    date: Optional[datetime] = None
+
+
+class MessageInResponse(InlineMessage):
+    reply: Any = None
 
 
 class Contact(BaseModel):
@@ -127,3 +136,5 @@ class DocumentAudio(DocumentVoice):
 
 class DocumentVideo(DocumentAudio):
     pass
+
+# ----------------------------------------------

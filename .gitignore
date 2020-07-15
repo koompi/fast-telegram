@@ -22,6 +22,7 @@ key/
 *.png
 *.jpg
 *.gif
+*.mpeg
 develop-eggs/
 dist/
 downloads/

@@ -7,6 +7,12 @@ from ..extra.message import get_message_text
 from ...core.config import api_id, api_hash
 from ...models.message import MessageInResponse, InlineMessage
 
+from ..extra.is_exit import is_not_exit
+from ...core.config import (
+    audio_dir, audio_type,
+    video_dir, video_type
+)
+
 
 async def get_all_messages(auth_key, msg):
     client = TelegramClient(StringSession(auth_key), api_id, api_hash)
@@ -70,27 +76,41 @@ async def get_all_messages(auth_key, msg):
                     date=message.date,
                     reply=inline_replys
                 )
-                print(type(reply[4]))
                 inline_replys = []
                 res.append(res_msg)
     return res
 
 
-def get_file(message):
-    if message.invoice:
-        file = "invoice type (unsupport)"
+async def get_file(auth_key, file):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+    try:
+        await client.connect()
+    except OSError:
+        raise HTTPException(status_code=400, detail="Failed to connect")
 
-    elif message.sticker:
-        file = "sticker"
-    elif message.gif:
-        file = "GIF"
-    elif message.photo:
-        file = "photo"
-    elif message.video_note or message.video:
-        file = "video"
-    elif message.voice:
-        file = "voice message"
-    elif message.audio:
-        file = "audio"
+    entity = await get_entity(file.entity, file.access_hash, client)
 
-    return file
+    async for message in client.iter_messages(
+        entity=entity,
+        ids=file.ids
+    ):
+        if message.video:
+            id = message.message.video
+            video = f"{video_dir}{id}.{video_type}"
+            if is_not_exit(video_dir, video, video_type):
+                with open(video, 'wb') as fd:
+                    async for chunk in client.iter_download(message.video):
+                        fd.write(chunk)
+                return 'download success'
+        elif message.audio:
+            id = message.audio.id
+            audio = f"{audio_dir}{id}.{audio_type}"
+            if is_not_exit(audio_dir, audio, audio_type):
+                with open(audio, 'wb') as fd:
+                    async for chunk in client.iter_download(message.audio):
+                        fd.write(chunk)
+                return 'download success'
+        else:
+            return 'can not download'
+
+        return 'file already exit'

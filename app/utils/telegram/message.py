@@ -14,7 +14,7 @@ from ...core.config import (
 )
 
 
-async def get_all_messages(auth_key, msg):
+async def get_all_messages(auth_key, msg, filter):
     client = TelegramClient(StringSession(auth_key), api_id, api_hash)
     try:
         await client.connect()
@@ -28,6 +28,7 @@ async def get_all_messages(auth_key, msg):
     async for message in client.iter_messages(
         entity=entity,
         limit=msg.limit,
+        filter=filter,
         offset_date=msg.offset_date,
         min_id=msg.min_id,
         max_id=msg.max_id,
@@ -114,3 +115,43 @@ async def get_file(auth_key, file):
             return 'can not download'
 
         return 'file already exit'
+
+
+async def edit_message(auth_key, msg):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+    try:
+        await client.connect()
+    except OSError:
+        raise HTTPException(status_code=400, detail="Failed to connect")
+
+    entity = await get_entity(msg.entity, msg.access_hash, client)
+    try:
+        await client.edit_message(
+            entity=entity,
+            message=msg.message,
+            text=msg.text,
+            link_preview=msg.link_preview,
+            file=msg.file,
+            force_document=msg.force_document
+            )
+    except Exception:
+        raise HTTPException(status_code=400, detail="something went wrong")
+
+
+async def delete_message(auth_key, msg):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+    try:
+        await client.connect()
+    except OSError:
+        raise HTTPException(status_code=400, detail="Failed to connect")
+
+    entity = await get_entity(msg.entity, msg.access_hash, client)
+
+    try:
+        await client.delete_messages(
+            entity=entity,
+            message_ids=msg.message_ids,
+            revoke=msg.revoke
+            )
+    except Exception:
+        raise HTTPException(status_code=400, detail="something went wrong")

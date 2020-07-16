@@ -1,12 +1,13 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Union
 
 
 class GetMessage(BaseModel):
     entity: int
     access_hash: int
     limit: int = 10
+    filters: Optional[str] = None
     offset_date: Optional[datetime] = None
     max_id: Optional[int] = 0
     min_id: Optional[int] = 0
@@ -14,6 +15,24 @@ class GetMessage(BaseModel):
     from_user: Optional[str] = None
     ids: List[int] = None
     reverse: Optional[bool] = False
+
+
+class EditMessage(BaseModel):
+    entity: int
+    access_hash: int
+    message: Union[int, str]
+    text: Optional[str] = None
+    link_preview: Optional[bool] = None
+    file:  Optional[str] = None
+    from_user: Optional[str] = None
+    force_document: Optional[bool] = None
+
+
+class DeleMessage(BaseModel):
+    entity: int
+    access_hash: int
+    message_ids: int
+    revoke: Optional[bool] = False
 
 
 class GetFileInput(BaseModel):

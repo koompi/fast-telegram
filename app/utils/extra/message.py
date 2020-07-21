@@ -1,4 +1,5 @@
 import os
+import mimetypes
 from typing import List
 from fastapi import HTTPException
 from ..extra.is_exit import is_not_exit
@@ -7,7 +8,8 @@ from ...core.config import (
     gif_dir, git_type,
     voice_dir, voice_type,
     audio_dir, audio_type,
-    video_dir, video_type
+    video_dir, video_type,
+    file_dir
 )
 from ...models.message import (
     Contact,
@@ -195,6 +197,19 @@ async def get_message_text(message, client):
             text = Document(
                 file=os.path.abspath(photo),
                 caption=message.message
+            )
+
+        elif message.document:
+            id = message.document.id
+            types = mimetypes.guess_extension(message.document.mime_type)
+            file = f"{file_dir}{id}.{types}"
+            _file = os.path.abspath(file)
+            if is_not_exit(file_dir, file, types):
+                _file = "document"
+            text = DocumentVideo(
+                file=_file,
+                filename=message.document.attributes[0].file_name,
+                caption=message.message,
             )
 
         elif message.raw_text:

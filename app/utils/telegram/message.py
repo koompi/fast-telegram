@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from telethon import TelegramClient
 from telethon.sessions import StringSession
+from telethon.utils import get_display_name
 
 from .entitiy import get_entity
 from ..extra.message import get_message_text
@@ -38,12 +39,7 @@ async def get_all_messages(auth_key, msg, filter):
         ids=msg.ids
     ):
         if message.text is not None:
-            try:
-                user = await client.get_entity(message.from_id)
-                from_user = f"{user.first_name} {user.last_name}"
-            except TypeError:
-                from_user = ""
-
+            from_user = get_display_name(message.sender)
             if message.is_reply:
                 text = await get_message_text(message, client)
                 msg_reply = await client.get_messages(

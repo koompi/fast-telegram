@@ -1,8 +1,6 @@
 import os
 from telethon import TelegramClient, events, utils
 from telethon.sessions import StringSession
-from telethon.utils import get_display_name
-
 from dotenv import load_dotenv
 
 load_dotenv('.env')
@@ -14,14 +12,13 @@ auth_key = os.getenv('AUTH')
 
 if __name__ == '__main__':
 
-    # @events.register(events.NewMessage(outgoing=True))
     async def handler(event):
-        sender = await event.get_sender()
-        name = utils.get_display_name(sender)
-        print(name, 'said', event.text, '!')
-        
+        chat = await event.get_chat()
+        name = utils.get_display_name(chat)
+        print(name, 'said', event.text)
+        return event.text
 
     with TelegramClient(StringSession(auth_key), api_id, api_hash) as client:
-        client.add_event_handler(handler, event=events.NewMessage)
+        name = client.add_event_handler(handler, event=events.NewMessage)
+        print(name)
         client.run_until_disconnected()
-

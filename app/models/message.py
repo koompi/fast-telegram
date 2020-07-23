@@ -41,6 +41,18 @@ class GetFileInput(BaseModel):
     ids: List[int]
 
 
+class SendMessage(BaseModel):
+    entity: int
+    access_hash: int
+    message: Optional[str] = None
+    reply_to: Optional[int] = None
+    link_preview: bool = True
+    file: Optional[str] = None
+    force_document: bool = False
+    clear_draft: bool = False
+    silent: Optional[bool] = False
+    schedule: Optional[datetime] = None
+
 # ------------------------------------------------------
 
 

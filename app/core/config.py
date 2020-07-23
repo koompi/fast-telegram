@@ -33,16 +33,18 @@ upload_collection_name = 'upload'
 channel_collection_name = 'channel'
 database_name = 'TELEGRAM_DB'
 
+parse_mode = 'html'
 
 sticker_dir = "./documents/stickers/"
 image_type = "jpg"
-gif_dir = "./documents/gif/"
+gif_dir = "./documents/gifs/"
 git_type = "gif"
 voice_type = "ogg"
-voice_dir = "./documents/voice/"
+voice_dir = "./documents/voices/"
 audio_type = "mpeg"
-audio_dir = "./documents/audio/"
+audio_dir = "./documents/audios/"
 video_type = "mp4"
-video_dir = "./documents/video/"
-image_dir = "./documents/image/"
+video_dir = "./documents/videos/"
+image_dir = "./documents/images/"
 file_dir = "./documents/files/"
+profile_dir = "./documents/profiles/"

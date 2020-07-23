@@ -18,6 +18,7 @@ class ChannelBase(BaseModel):
 
 
 class DialogInResponse(BaseModel):
+    profile: Optional[str] = None
     name: str
     datetime: datetime
     message: str

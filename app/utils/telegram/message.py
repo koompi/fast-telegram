@@ -39,6 +39,10 @@ async def get_all_messages(auth_key, msg, filter):
         ids=msg.ids
     ):
         if message.text is not None:
+            await client.send_read_acknowledge(
+                entity=entity,
+                message=message
+            )
             from_user = get_display_name(message.sender)
             if message.is_reply:
                 text = await get_message_text(message, client)
@@ -98,7 +102,7 @@ async def get_file(auth_key, file):
                 with open(video, 'wb') as fd:
                     async for chunk in client.iter_download(message.video):
                         fd.write(chunk)
-                return 'download success'
+                return video
         elif message.audio:
             id = message.audio.id
             audio = f"{audio_dir}{id}.{audio_type}"
@@ -106,7 +110,7 @@ async def get_file(auth_key, file):
                 with open(audio, 'wb') as fd:
                     async for chunk in client.iter_download(message.audio):
                         fd.write(chunk)
-                return 'download success'
+                return audio
         else:
             return 'can not download'
 
@@ -148,6 +152,31 @@ async def delete_message(auth_key, msg):
             entity=entity,
             message_ids=msg.message_ids,
             revoke=msg.revoke
+            )
+    except Exception:
+        raise HTTPException(status_code=400, detail="something went wrong")
+
+
+async def send_message(auth_key, msg):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+    try:
+        await client.connect()
+    except OSError:
+        raise HTTPException(status_code=400, detail="Failed to connect")
+
+    entity = await get_entity(msg.entity, msg.access_hash, client)
+
+    try:
+        await client.send_message(
+            entity=entity,
+            message=msg.message,
+            reply_to=msg.reply_to,
+            link_preview=msg.link_preview,
+            file=msg.file,
+            force_document=msg.force_document,
+            clear_draft=msg.clear_draft,
+            silent=msg.silent,
+            schedule=msg.schedule,
             )
     except Exception:
         raise HTTPException(status_code=400, detail="something went wrong")

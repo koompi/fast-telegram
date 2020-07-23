@@ -5,10 +5,10 @@ from ....db.mongodb import AsyncIOMotorClient, get_database
 
 from ....models.user import User
 from ....models.message import (
-    GetMessage, GetFileInput, EditMessage, DeleMessage
+    GetMessage, GetFileInput, EditMessage, DeleMessage, SendMessage
 )
 from ....utils.telegram.message import (
-    get_all_messages, get_file, edit_message, delete_message
+    get_all_messages, get_file, edit_message, delete_message, send_message
 )
 from ....utils.extra.get_fliters import get_filters
 
@@ -94,4 +94,23 @@ async def delete_messages(
             detail='unauthorize user'
         )
     await delete_message(user.telegram_auth_key, delete)
+    return {'message': 'success'}
+
+
+@router.post(
+    '/send_message',
+    tags=['message'],
+    status_code=200
+)
+async def send_messages(
+    msg: SendMessage,
+    user: User = Depends(get_current_user_authorizer()),
+    db: AsyncIOMotorClient = Depends(get_database)
+):
+    if not user.is_confirm:
+        raise HTTPException(
+            status_code=401,
+            detail='unauthorize user'
+        )
+    await send_message(user.telegram_auth_key, msg)
     return {'message': 'success'}

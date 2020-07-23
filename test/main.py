@@ -20,7 +20,6 @@ messages_list = []
 
 class Telegrem:
     def __init__(self, bot_token, api_id, api_hash):
-        self.bot_token = bot_token
         self.api_id = api_id
         self.api_hash = api_hash
         self.client = TelegramClient('bot', api_id, api_hash)
@@ -30,7 +29,7 @@ class Telegrem:
         messages_list.append(event.raw_text)
 
     async def start_polling(self):
-        await self.client.start(bot_token=self.bot_token)
+        await self.client.connect()
         self.client.add_event_handler(self.receive_message, events.NewMessage)
 
 

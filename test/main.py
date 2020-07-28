@@ -1,46 +1,71 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
+from fastapi.responses import HTMLResponse
+
+# ---------------------------------------------
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
-import asyncio
-import json
 import os
 from dotenv import load_dotenv
 
 load_dotenv('.env')
 
-API_ID = os.getenv('API_ID')
-API_HASH = os.getenv('API_HASH')
+api_id = os.getenv('API_ID')
+api_hash = os.getenv('API_HASH')
 auth_key = os.getenv('AUTH')
 
-loop = asyncio.get_event_loop()
+# --------------------------------------------------
+
 app = FastAPI()
 
-messages_list = []
+html = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <ul id='messages'>
+        </ul>
+        <script>
+            var ws = new WebSocket("ws://localhost:8000/ws");
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+        </script>
+    </body>
+</html>
+"""
 
 
-class Telegrem:
-    def __init__(self, bot_token, api_id, api_hash):
-        self.api_id = api_id
-        self.api_hash = api_hash
-        self.client = TelegramClient('bot', api_id, api_hash)
-
-    async def receive_message(self, event):
-        print(f'message is here {event.raw_text}')
-        messages_list.append(event.raw_text)
-
-    async def start_polling(self):
-        await self.client.connect()
-        self.client.add_event_handler(self.receive_message, events.NewMessage)
+async def handler(event):
+    print(event.text)
+    # yield event.text
 
 
-async def background():
-    telegrem = TelegramClient(StringSession(auth_key), API_ID, API_HASH)
-    loop.create_task(telegrem.start_polling())
+async def tele_event(websocket):
+    client = TelegramClient(StringSession(auth_key), api_id, api_hash)
+    await client.connect()
+    print("start telegram")
+    client.add_event_handler(handler, event=events.NewMessage)
+    # await websocket.send_text(f"Message text was")
+    await client.run_until_disconnected()
 
 
-@app.route('/')
-async def hello():
-    return json.dumps(messages_list)
+@app.get("/")
+async def get():
+    return HTMLResponse(html)
 
-# loop.create_task(background())
 
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    while True:
+        await tele_event(websocket)
+        # data = await websocket.receive_text()
+        # await websocket.send_text(f"Message text was: {data}")
+
+# uvicorn main:app --reload

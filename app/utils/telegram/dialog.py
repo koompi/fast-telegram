@@ -1,3 +1,4 @@
+import os
 from fastapi import HTTPException
 from telethon import TelegramClient
 from telethon.sessions import StringSession
@@ -59,6 +60,8 @@ async def get_all_dialogs(auth_key, dialog):
                         download_big=False
                         )
                     print(f"download...")
+            if profile:
+                profile = os.path.abspath(profile)
 
             from_user = get_display_name(dialog.message)
             entity = get_info(dialog)

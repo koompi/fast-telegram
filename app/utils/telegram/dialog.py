@@ -66,14 +66,14 @@ async def get_all_dialogs(auth_key, dialog):
             from_user = get_display_name(dialog.message)
             entity = get_info(dialog)
             message = get_lastest_message(dialog.message)
-
             res = DialogInResponse(
                 profile=profile,
                 name=dialog.name,
                 datetime=dialog.date,
                 message=message,
                 from_user=from_user,
-                entity=entity,
+                peer_id=entity.peer_id,
+                access_hash=entity.access_hash
             )
             dialogs.append(res)
 

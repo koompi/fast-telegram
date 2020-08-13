@@ -18,8 +18,7 @@ async def get_entity(peer_id, access_hash, client):
                 )
             except Exception:
                 entity = await client.get_entity(InputPeerChat(
-                    peer_id,
-                    access_hash=access_hash)
+                    peer_id)
                 )
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid Peer Id")

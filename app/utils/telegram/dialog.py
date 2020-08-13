@@ -58,7 +58,7 @@ async def get_all_dialogs(auth_key, dialog):
                         dialog.entity,
                         file=profile,
                         download_big=False
-                        )
+                    )
                     print(f"download...")
             if profile:
                 profile = os.path.abspath(profile)

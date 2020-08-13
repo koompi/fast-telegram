@@ -248,8 +248,11 @@ def get_lastest_message(dialog):
         message = "game"
 
     elif dialog.sticker:
-        alt = (dialog.sticker.attributes)[1].alt
-        message = f"{alt} sticker"
+        try:
+            alt = (dialog.sticker.attributes)[1].alt
+            message = f"{alt} sticker"
+        except AttributeError:
+            message = "sticker"
 
     elif dialog.gif:
         message = "GIF"

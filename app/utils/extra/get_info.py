@@ -1,35 +1,17 @@
-from ...models.dialog import (
-    UserBase,
-    ChannelBase,
-    ChatBase,
-)
+from ...models.dialog import UserBase
 
 
 def get_info(dialog, client=None):
-    if dialog.is_user:
+    if dialog.is_user or dialog.is_channel:
         entity = UserBase(
             peer_id=dialog.entity.id,
             access_hash=dialog.entity.access_hash,
-            first_name=dialog.entity.first_name,
-            last_name=dialog.entity.last_name,
-            username=dialog.entity.username,
-            scam=dialog.entity.scam
         )
 
-    elif dialog.is_channel:
-        entity = ChannelBase(
-            peer_id=dialog.entity.id,
-            access_hash=dialog.entity.access_hash,
-            username=dialog.entity.username,
-            title=dialog.entity.title,
-            participants_count=dialog.entity.participants_count,
-            scam=dialog.entity.scam
-        )
     elif dialog.is_group:
-        entity = ChatBase(
+        entity = UserBase(
             peer_id=dialog.entity.id,
-            title=dialog.entity.title,
-            participants_count=dialog.entity.participants_count
+            access_hash=0,
         )
     else:
         entity = None

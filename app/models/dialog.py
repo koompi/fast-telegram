@@ -1,10 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, Any
-
-
-class ChatBase(BaseModel):
-    peer_id: int
+from typing import Optional
 
 
 class UserBase(BaseModel):
@@ -12,18 +8,12 @@ class UserBase(BaseModel):
     access_hash: int
 
 
-class ChannelBase(BaseModel):
-    peer_id: int
-    access_hash: int
-
-
-class DialogInResponse(BaseModel):
+class DialogInResponse(UserBase):
     profile: Optional[str] = None
     name: str
     datetime: datetime
     message: str
     from_user: Optional[str] = None
-    entity: Any
 
 
 class DialogInInput(BaseModel):

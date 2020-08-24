@@ -1,5 +1,5 @@
 from telethon.tl.types import (
-    InputMessagesFilterEmpty,
+    # InputMessagesFilterEmpty,
     InputMessagesFilterPhotos,
     InputMessagesFilterContacts,
     InputMessagesFilterDocument,
@@ -16,7 +16,8 @@ from telethon.tl.types import (
 
 def get_filters(filters):
     if filters is None:
-        _filter = InputMessagesFilterEmpty
+        # _filter = InputMessagesFilterEmpty
+        _filter = None
     elif filters == 'photo':
         _filter = InputMessagesFilterPhotos
     elif filters == 'contact':
@@ -40,6 +41,5 @@ def get_filters(filters):
     elif filters == 'voice':
         _filter = InputMessagesFilterVoice
     else:
-        _filter = InputMessagesFilterEmpty
-
+        _filter = None
     return _filter

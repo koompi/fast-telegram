@@ -1,3 +1,4 @@
+import os
 from fastapi import HTTPException
 from telethon import TelegramClient
 from telethon.sessions import StringSession
@@ -57,20 +58,22 @@ async def get_all_dialogs(auth_key, dialog):
                         dialog.entity,
                         file=profile,
                         download_big=False
-                        )
+                    )
                     print(f"download...")
+            if profile:
+                profile = os.path.abspath(profile)
 
             from_user = get_display_name(dialog.message)
             entity = get_info(dialog)
             message = get_lastest_message(dialog.message)
-
             res = DialogInResponse(
                 profile=profile,
                 name=dialog.name,
                 datetime=dialog.date,
                 message=message,
                 from_user=from_user,
-                entity=entity,
+                peer_id=entity.peer_id,
+                access_hash=entity.access_hash
             )
             dialogs.append(res)
 

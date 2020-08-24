@@ -24,6 +24,9 @@ from ...models.message import (
     DocumentAudio,
     DocumentVideo,
     DocumentVoice,
+    Sticker,
+    Gif,
+    Photo
 )
 
 
@@ -129,8 +132,8 @@ async def get_message_text(message, client):
                 with open(sticker, 'wb') as fd:
                     async for chunk in client.iter_download(message.sticker):
                         fd.write(chunk)
-            text = Document(
-                file=os.path.abspath(sticker),
+            text = Sticker(
+                sticker=os.path.abspath(sticker),
                 caption=message.message
             )
 
@@ -141,8 +144,8 @@ async def get_message_text(message, client):
                 with open(gif, 'wb') as fd:
                     async for chunk in client.iter_download(message.gif):
                         fd.write(chunk)
-            text = Document(
-                file=os.path.abspath(gif),
+            text = Gif(
+                gif=os.path.abspath(gif),
                 caption=message.message
             )
 
@@ -154,7 +157,7 @@ async def get_message_text(message, client):
                     async for chunk in client.iter_download(message.voice):
                         fd.write(chunk)
             text = DocumentVoice(
-                file=os.path.abspath(voice),
+                voice=os.path.abspath(voice),
                 caption=message.message,
                 duration=message.voice.attributes[0].duration
             )
@@ -166,7 +169,7 @@ async def get_message_text(message, client):
             if is_not_exit(audio_dir, audio, audio_type):
                 file = "audio"
             text = DocumentAudio(
-                file=file,
+                audio=file,
                 filename=message.audio.attributes[1].file_name,
                 caption=message.message,
                 duration=message.audio.attributes[0].duration
@@ -180,7 +183,7 @@ async def get_message_text(message, client):
             if is_not_exit(video_dir, video, video_type):
                 file = "video"
             text = DocumentVideo(
-                file=file,
+                video=file,
                 filename=message.video.attributes[1].file_name,
                 caption=message.message,
                 duration=message.video.attributes[0].duration
@@ -194,8 +197,8 @@ async def get_message_text(message, client):
                 with open(photo, 'wb') as fd:
                     async for chunk in client.iter_download(message.photo):
                         fd.write(chunk)
-            text = Document(
-                file=os.path.abspath(photo),
+            text = Photo(
+                photo=os.path.abspath(photo),
                 caption=message.message
             )
 
@@ -206,7 +209,7 @@ async def get_message_text(message, client):
             _file = os.path.abspath(file)
             if is_not_exit(file_dir, file, types):
                 _file = "document"
-            text = DocumentVideo(
+            text = Document(
                 file=_file,
                 filename=message.document.attributes[0].file_name,
                 caption=message.message,

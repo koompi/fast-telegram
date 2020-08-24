@@ -154,18 +154,42 @@ class WebPage(BaseModel):
 
 class Document(BaseModel):
     file: str
+    filename: Optional[str] = None
     caption: Optional[str] = None
 
 
-class DocumentVoice(Document):
+class Photo(BaseModel):
+    photo: str
+    caption: Optional[str] = None
+
+
+class Sticker(BaseModel):
+    sticker: str
+    caption: Optional[str] = None
+
+
+class Gif(BaseModel):
+    gif: str
+    caption: Optional[str] = None
+
+
+class DocumentVoice(BaseModel):
+    voice: str
+    caption: Optional[str] = None
     duration: Optional[float] = 0
 
 
-class DocumentAudio(DocumentVoice):
+class DocumentAudio(BaseModel):
+    audio: str
+    caption: Optional[str] = None
+    duration: Optional[float] = 0
     filename: Optional[str] = None
 
 
-class DocumentVideo(DocumentAudio):
-    pass
+class DocumentVideo(BaseModel):
+    audio: str
+    caption: Optional[str] = None
+    duration: Optional[float] = 0
+    filename: Optional[str] = None
 
 # ----------------------------------------------

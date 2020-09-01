@@ -45,7 +45,7 @@ async def get_owner(auth_key):
     if profile is not None:
         if is_not_exit(profile_dir, profile, image_type):
             await client.download_profile_photo(
-                me.entity,
+                me,
                 file=profile,
                 download_big=False
             )

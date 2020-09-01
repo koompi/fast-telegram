@@ -16,6 +16,11 @@ class DialogInResponse(UserBase):
     from_user: Optional[str] = None
 
 
+class MeInResponse(BaseModel):
+    profile: Optional[str] = None
+    name: str
+
+
 class DialogInInput(BaseModel):
     limit: int = 20
     offset_date: Optional[datetime] = None

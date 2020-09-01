@@ -168,9 +168,13 @@ async def get_message_text(message, client):
             file = os.path.abspath(audio)
             if is_not_exit(audio_dir, audio, audio_type):
                 file = "audio"
+            try:
+                filename = message.audio.attributes[1].file_name
+            except Exception:
+                filename = ""
             text = DocumentAudio(
                 audio=file,
-                filename=message.audio.attributes[1].file_name,
+                filename=filename,
                 caption=message.message,
                 duration=message.audio.attributes[0].duration
             )
@@ -182,9 +186,13 @@ async def get_message_text(message, client):
             file = os.path.abspath(video)
             if is_not_exit(video_dir, video, video_type):
                 file = "video"
+            try:
+                filename = message.video.attributes[1].file_name
+            except Exception:
+                filename = ""
             text = DocumentVideo(
                 video=file,
-                filename=message.video.attributes[1].file_name,
+                filename=filename,
                 caption=message.message,
                 duration=message.video.attributes[0].duration
             )
@@ -209,9 +217,13 @@ async def get_message_text(message, client):
             _file = os.path.abspath(file)
             if is_not_exit(file_dir, file, types):
                 _file = "document"
+            try:
+                filename = message.document.attributes[0].file_name
+            except Exception:
+                filename = ""
             text = Document(
                 file=_file,
-                filename=message.document.attributes[0].file_name,
+                filename=filename,
                 caption=message.message,
             )
 

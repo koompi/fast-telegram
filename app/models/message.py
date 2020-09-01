@@ -187,7 +187,7 @@ class DocumentAudio(BaseModel):
 
 
 class DocumentVideo(BaseModel):
-    audio: str
+    video: str
     caption: Optional[str] = None
     duration: Optional[float] = 0
     filename: Optional[str] = None

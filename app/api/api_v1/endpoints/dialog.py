@@ -56,7 +56,7 @@ async def delete_dialog(
 
 @router.get(
     '/get_me',
-    tags=['dialogs'],
+    tags=['me'],
     status_code=200
 )
 async def get_me(

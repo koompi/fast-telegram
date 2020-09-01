@@ -1,0 +1,336 @@
+@import "~antd/dist/antd.css";
+
+
+
+.login-form {
+  max-width: 100%;
+  width: 25%;
+  height: 50%;
+  margin-top: 5%;
+}
+.login-background {
+  display: flex;
+}
+.background-login {
+  position: relative;
+  margin-top: 2%;
+}
+
+.container-login {
+  display: flex;
+}
+.login-header {
+  margin-top: 10%;
+  margin-bottom: 5%;
+  font-size: xx-large;
+  font-weight: bold;
+  color: black;
+  text-align: center;
+  justify-content: center;
+  font-family: "Open Sans Condensed", sans-serif;
+  font-family: "Ubuntu", sans-serif;
+  display: flex;
+}
+.forgot-password {
+  margin-left: 43%;
+  font-weight: bold;
+}
+.button-submit {
+  width: 30%;
+  font-weight: bolder;
+}
+.forgot-label {
+  justify-content: space-around;
+  padding: 12px;
+}
+.create-new {
+  width: 100%;
+  font-weight: bolder;
+}
+.create-account-label {
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+}
+.term-label {
+  font-size: larger;
+  text-align: center;
+  color: gray;
+  padding-top: 50px;
+}
+.success-alert {
+  text-align: center;
+}
+
+/* ----register----- */
+
+.container-register {
+  display: flex;
+}
+.background-register {
+  position: relative;
+  margin-top: 2%;
+  margin-top: 10%;
+  margin-left: 3%;
+}
+.register-background {
+  display: flex;
+  flex-direction: row;
+}
+.register-form {
+  max-width: 100%;
+  width: 25%;
+  height: 50%;
+  margin-top: 5%;
+  margin-left: -5%;
+}
+.relogin {
+  margin-left: 40%;
+  width: 30%;
+}
+
+/* ------verify-------- */
+
+.verify-form {
+  max-width: 100%;
+  width: 25%;
+  margin-top: 13%;
+  height: 50%;
+  margin-left: -5%;
+}
+
+/* --------channel-------- */
+.container-user-dialog{
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+.channel-search {
+  display: flex;
+  padding: 12px;
+  position: sticky;
+}
+.channel-dialog{
+  overflow-y: scroll;
+  height: 100%;
+  padding-bottom: 60px;
+}
+.channel-menu {
+  margin: 5%;
+  padding: 5%;
+}
+.logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+}
+
+.auto-slider-button {
+  margin-right: 20px;
+}
+.profile-container {
+  justify-content: center;
+  text-align: center;
+  margin-top: 7%;
+}
+.profile-name {
+  color: aliceblue;
+  font-size: x-large;
+  padding: 5px;
+}
+
+.left-hand-name {
+  display: inline ;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.profile-container-left {
+  padding-left: 20px;
+}
+.chat-list-items {
+  height: 70px !important;
+}
+.profile-chat-list{
+  text-align: center;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 20px;
+  padding-top: 10px;
+  font-family: 'Suwannaphum', cursive;
+}
+.loader-list{
+  display: flex;
+  margin-left: 40px;
+  height: 70px;
+}
+.loader-avatar{
+  display: inline;
+}
+.loader-name{
+  margin-left: 30px;
+}
+.chat-list {
+  margin-top: 12px;
+}
+
+.profile-options {
+  font-size: 25px;
+}
+.options-profile-icon {
+  color: rgb(233, 233, 233);
+  padding: 10px;
+}
+.site-layout-header {
+  background: #09023a;
+  position: sticky;
+  width: 100%;
+  top: 0em;
+  display: flex;
+  z-index: 1;
+}
+.header-name {
+  color: rgb(233, 233, 233);
+  font-weight: bold;
+}
+.header-options {
+  margin-left: 75%;
+  font-size: 20px;
+}
+.options-header-icon {
+  color: rgb(233, 233, 233);
+  padding: 10px;
+}
+.site-layout-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+  min-height: calc(100vh - 150px);
+  background: white;
+}
+
+.site-layout-footer {
+  display: flex;
+  bottom: 0;
+  position: sticky;
+  width: 100%;
+}
+.sending-button{
+  width: 60px;
+}
+.sending-button:hover{
+  background:  rgb(32, 155, 255);
+  color: white;
+}
+
+/* -------No conversation ----------- */
+
+.container-noconversation{
+  height: 100%;
+  padding-bottom: 20%;
+}
+
+/* --------loading-icons------------ */
+.loading-icons{
+  position: relative;
+  padding-top: 40%;
+  padding-bottom: 60%;
+  font-size: xx-large;
+}
+
+/* ---------send message--------- */
+
+.send-message-container {
+  max-width: 60% !important;
+  background-color: #eceff1;
+  border-radius: 15px 15px 0 15px;
+  padding: 0 1%;
+  margin: 1%;
+  align-self: flex-end;
+  float: right;
+  margin-right: 30px;
+}
+
+.send-text-message {
+  max-width: max-content;
+  min-width: 20%;
+  display: inline-block;
+  vertical-align: middle;
+  word-wrap: break-word;
+  font-family: Helvetica;
+  color: black;
+  font-size: larger;
+  margin-top: 10px;
+  float: right;
+}
+.send-sound-message{
+  padding-top: 10px;
+  outline-style: none;
+}
+.send-message-times{
+  font-size: x-small;
+  font-weight: bolder;
+  color: #000000;
+  float: right;
+} 
+.send-link-message{
+  max-width: 100%;
+  min-width: 10%;
+  padding-top: 15px;
+  display: inline-block;
+  vertical-align: middle;
+  word-wrap: break-word;
+  font-family: Helvetica;
+  color: rgb(51, 155, 252);
+  font-size: larger;
+  margin-top: 10px;
+  float: right;
+  text-decoration: underline;
+}
+
+/* --------get message---------- */
+
+.get-message-container {
+  max-width: 60% !important;
+  background-color: rgb(32, 155, 255);
+  border-radius: 15px 15px 15px 0;
+  align-self: flex-start;
+  padding: 0 1%;
+  margin: 10px;
+  margin-left: 30px;
+  float: left;
+  
+}
+.get-text-message {
+  max-width: max-content;
+  min-width: 20%;
+  display: inline-block;
+  vertical-align: middle;
+  word-wrap: break-word;
+  font-family: Helvetica;
+  font-size: larger;
+  margin-top: 10px;
+  color: #ffffff;
+}
+.get-link-message{
+  max-width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  word-wrap: break-word;
+  font-family: Helvetica;
+  font-size: larger;
+  margin-top: 10px; 
+  text-decoration: underline;
+  color: #eceff1;
+}
+.get-sound-message{
+  padding-top: 10px;
+  outline-style: none;
+}
+
+.get-message-times {
+  font-size: x-small;
+  font-weight: bolder;
+  color:#ffffff;
+}

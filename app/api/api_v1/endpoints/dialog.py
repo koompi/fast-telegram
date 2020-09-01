@@ -54,7 +54,7 @@ async def delete_dialog(
     return {'message': f'{dels} have been delete'}
 
 
-@router.post(
+@router.get(
     '/get_me',
     tags=['dialogs'],
     status_code=200

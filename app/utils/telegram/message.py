@@ -38,16 +38,12 @@ async def get_all_messages(auth_key, msg, filter):
         from_user=msg.from_user,
         ids=msg.ids
     ):
-        me = await client.get_me()
-        me = get_display_name(me)
         if message.text is not None:
             await client.send_read_acknowledge(
                 entity=entity,
                 message=message
             )
             from_user = get_display_name(message.sender)
-            if from_user == me:
-                from_user = "you"
             if message.is_reply:
                 text = await get_message_text(message, client)
                 msg_reply = await client.get_messages(

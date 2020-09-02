@@ -38,12 +38,16 @@ async def get_all_messages(auth_key, msg, filter):
         from_user=msg.from_user,
         ids=msg.ids
     ):
+        me = await client.get_me()
+        me = get_display_name(me)
         if message.text is not None:
             await client.send_read_acknowledge(
                 entity=entity,
                 message=message
             )
             from_user = get_display_name(message.sender)
+            if from_user == me:
+                from_user = "you"
             if message.is_reply:
                 text = await get_message_text(message, client)
                 msg_reply = await client.get_messages(
@@ -55,7 +59,7 @@ async def get_all_messages(auth_key, msg, filter):
                     text,
                     message.id,
                     message.date
-                    ))
+                ))
                 text = ""
             else:
                 text = await get_message_text(message, client)
@@ -133,7 +137,7 @@ async def edit_message(auth_key, msg):
             link_preview=msg.link_preview,
             file=msg.file,
             force_document=msg.force_document
-            )
+        )
     except Exception:
         raise HTTPException(status_code=400, detail="something went wrong")
 
@@ -152,7 +156,7 @@ async def delete_message(auth_key, msg):
             entity=entity,
             message_ids=msg.message_ids,
             revoke=msg.revoke
-            )
+        )
     except Exception:
         raise HTTPException(status_code=400, detail="something went wrong")
 
@@ -177,6 +181,6 @@ async def send_message(auth_key, msg):
             clear_draft=msg.clear_draft,
             silent=msg.silent,
             schedule=msg.schedule,
-            )
+        )
     except Exception:
         raise HTTPException(status_code=400, detail="something went wrong")

@@ -294,14 +294,14 @@
 .get-message-container {
   max-width: 60% !important;
   background-color: rgb(32, 155, 255);
-  border-radius: 15px 15px 15px 0;
+  border-radius: 0px 15px 15px 15px;
   align-self: flex-start;
   padding: 0 1%;
   margin: 10px;
   margin-left: 30px;
   float: left;
-  
 }
+
 .get-text-message {
   max-width: max-content;
   min-width: 20%;

@@ -20,13 +20,13 @@ import {
   FileTextOutlined,
   VideoCameraAddOutlined,
   LinkOutlined,
-  LogoutOutlined,  
+  LogoutOutlined,
   PlusCircleOutlined,
   SendOutlined,
   MessageOutlined,
   PhoneOutlined,
   CameraOutlined,
-  SyncOutlined
+  SyncOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import { Helmet } from "react-helmet";
@@ -47,13 +47,14 @@ function Channel() {
   const [theme, setTheme] = useState("light");
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const [message, setGetmessage] = useState([]);
+  const [getmessage, setGetmessage] = useState([]);
   const [color, setColor] = useState([]);
+  const [owner, setOwner] = useState([]);
 
   const randomChangeColors = () => {
     const ColorList = [
       "#f56a00",
-      "#7265e6",  
+      "#7265e6",
       "#ffbf00",
       "#00a2ae",
       "#eb2f96",
@@ -104,7 +105,7 @@ function Channel() {
     })
       .then((res) => {
         setUsers(res.data);
-        console.log("datasss", res.data);
+        console.log("users", res.data);
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -114,6 +115,25 @@ function Channel() {
       .catch((err) => console.log(err));
   }, []);
 
+  useEffect(() => {
+    axios({
+      method: "GET",
+      url: "http://127.0.0.1:8000/api/get_me",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `jwt ` + getToken,
+      },
+    })
+      .then((res) => {
+        console.log("mydata", res.data);
+        if (getToken) {
+          setOwner(res.data);
+        } else {
+          return null;
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   // useEffect(() => {
   //   axios({
@@ -125,7 +145,7 @@ function Channel() {
   //     },
   //     data: {
   //       entity: 467551940,
-  //       access_hash: -1690262821289062400,
+  //       access_hash: -8845448756285871000,
   //       limit: 15,
   //     },
   //   }).then((res) => {
@@ -134,60 +154,91 @@ function Channel() {
   //   });
   // }, []);
 
-  const SelectedUser = () => {
+  // const handleSelectedUser = (e) => {
+  //   setUsers(e.target.peer_id, e.target.access_hash);
+  //   console.log("selected!");
+  // }
+
+  function selectedUser(peer_id, access_hash) {
     const handleSelectedUser = {
-      entity: 1159756398,
-      access_hash: -8845448756285871438,
+      entity: peer_id,
+      access_hash: access_hash,
     };
-    axios.post("http://127.0.0.1:8000/api/get_messages", handleSelectedUser,{
-      headers: {
-              "Content-Type": "application/json",
-              Authorization: `jwt ` + getToken,
-          }, 
-      data: {
-        limit: 10,        
-      }
-    }).then((res) =>{
-      console.log("message", res.data);
-      setGetmessage(res.data);
-    }).catch((err)=> console.log(err));
+    console.log("id", peer_id);
+    console.log("access", access_hash);
+    axios
+      .post("http://127.0.0.1:8000/api/get_messages", handleSelectedUser, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `jwt ` + getToken,
+        },
+        data: {
+          limit: 10,
+        },
+      })
+      .then((res) => {
+        console.log("message", res.data);
+        console.log("id", parseInt(peer_id));
+        console.log("access", parseInt(access_hash));
+        setGetmessage(res.data);
+      })
+      .catch((err) => console.log(err));
   }
 
-  const onSendMessage = () =>{
+  const onSendMessage = () => {
     fetch("http://127.0.0.1:8000/api/send_message", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `jwt ` + getToken,
       },
-      data:{
-        entity: 467551940,
-        access_hash: -1690262821289062400,
-        message: "sad"
+      data: {
+        entity: 741444345,
+        access_hash: -4511287551986416600,
       },
-    }).then ((res) => res.json())
+    })
+      .then((res) => res.json())
       .then((data) => {
         console.log(data);
-      }).catch((err)=> console.log(err));
-  }
+      })
+      .catch((err) => console.log(err));
+  };
 
   const GetMessages = () => {
-    return message.map((msg) => {
+    return getmessage.map((msg) => {
       const d = new Date(msg.date);
       // console.log(msg);
-      if (getToken && msg.message !== null) {
+      if (msg.from_user !== owner.name && msg.message !== null) {
         if (msg.message.text) {
           return (
-            <div className="get-message-container">
-              <div className="get-message">
-                <p className="get-text-message">{msg.message.text}</p>
+            <React.Fragment>
+              <div className="get-message-container">
+                <div className="get-message">
+                  <p className="get-text-message">{msg.message.text}</p>
+                </div>
+                <div>
+                  <p className="get-message-times">
+                    {d.toLocaleTimeString("en-AU")}
+                  </p>
+                </div>
               </div>
               <div>
-                <p className="get-message-times">
-                  {d.toLocaleTimeString("en-AU")}
-                </p>
+                <Avatar
+                  style={{
+                    backgroundColor: color,
+                    verticalAlign: "middle",
+                    textAlign: "center",
+                    height: 30,
+                    width: 30,
+                    fontSize: 15,
+                    paddingBottom: 10,
+                  }}
+                >
+                  {msg.from_user.slice(0, 1)}
+                  {randomChangeColors}
+                </Avatar>
               </div>
-            </div>
+            </React.Fragment>
           );
         }
         if (msg.message.file) {
@@ -211,7 +262,7 @@ function Channel() {
               <div className="get-message">
                 {/* <audio className="get-text-message" controls type="audio/ogg" src={msg.message.voice}/> */}
                 <audio controls className="get-sound-message">
-                  <source src={msg.message.voice} type="file/ogg"/>
+                  <source src={msg.message.voice} type="file/ogg" />
                 </audio>
               </div>
               <div>
@@ -226,7 +277,7 @@ function Channel() {
           return (
             <div className="get-message-container">
               <div className="get-message">
-                <img className="get-text-message" src={msg.message.photo}/>
+                <img className="get-text-message" src={msg.message.photo} />
               </div>
               <div>
                 <p className="get-message-times">
@@ -236,12 +287,12 @@ function Channel() {
             </div>
           );
         }
-        if(msg.message.sticker){
-          return(
+        if (msg.message.sticker) {
+          return (
             <div className="get-message-container">
               <div className="get-message">
-                <img className="get-text-message" src={msg.message.sticker}/>
-                </div>
+                <img className="get-text-message" src={msg.message.sticker} />
+              </div>
               <div>
                 <p className="get-message-times">
                   {d.toLocaleTimeString("en-AU")}
@@ -264,11 +315,11 @@ function Channel() {
                 <a
                   href={msg.message.url}
                   target="_blank"
-                  style={{ display: "flex", marginTop: "20px", color:'white' }}
+                  style={{ display: "flex", marginTop: "20px", color: "white" }}
                 >
                   {msg.message.site_name}
                 </a>
-                <h3 style={{color:'white'}}>{msg.message.title}</h3>
+                <h3 style={{ color: "white" }}>{msg.message.title}</h3>
                 <p>{msg.message.description.substring(0, 100)}...</p>
               </div>
               <div>
@@ -292,7 +343,7 @@ function Channel() {
             </div>
           );
         }
-      } else if (msg.id % 2 !== 0) {
+      } else if (msg.from_user === owner.name && msg.message !== null) {
         if (msg.message.text) {
           return (
             <div className="send-message-container">
@@ -327,7 +378,7 @@ function Channel() {
               <div className="send-message">
                 {/* <audio className="send-sound-message" controls type="audio/ogg" src={msg.message.voice}/> */}
                 <audio controls className="send-sound-message">
-                  <source src={msg.message.voice} type="audio/ogg"/>
+                  <source src={msg.message.voice} type="audio/ogg" />
                 </audio>
               </div>
               <div>
@@ -342,7 +393,7 @@ function Channel() {
           return (
             <div className="send-message-container">
               <div className="send-message">
-                <img className="send-text-message" src={msg.message.photo}/>
+                <img className="send-text-message" src={msg.message.photo} />
               </div>
               <div>
                 <p className="send-message-times">
@@ -352,12 +403,12 @@ function Channel() {
             </div>
           );
         }
-        if(msg.message.sticker){
-          return(
+        if (msg.message.sticker) {
+          return (
             <div className="send-message-container">
               <div className="send-message">
-                <img className="send-text-message" src={msg.message.sticker}/>
-                </div>
+                <img className="send-text-message" src={msg.message.sticker} />
+              </div>
               <div>
                 <p className="send-message-times">
                   {d.toLocaleTimeString("en-AU")}
@@ -476,13 +527,14 @@ function Channel() {
               <div className="channel-dialog">
                 <Menu theme="dark" mode="inline">
                   {users.map((user) => (
-                    <Menu.ItemGroup
-                      className="profile-container-left"                      
-                    >
+                    <Menu.ItemGroup className="profile-container-left">
                       <Menu.Item
-                        className="chat-list-items" 
-                        key={user.peer_id}                                               
-                        onClick={SelectedUser}                      
+                        className="chat-list-items"
+                        key={user.peer_id}
+                        onClick={() =>
+                          selectedUser(user.peer_id, user.access_hash)
+                        }
+                        // onClick={selectedUser}
                       >
                         <Badge className="chat-list">
                           {/* <Avatar
@@ -504,7 +556,7 @@ function Channel() {
                             {randomChangeColors}
                           </Avatar>
                         </Badge>
-                          <p className="left-hand-name">{user.name}</p>
+                        <p className="left-hand-name">{user.name}</p>
                       </Menu.Item>
                     </Menu.ItemGroup>
                   ))}
@@ -517,7 +569,7 @@ function Channel() {
         <Col span={14}>
           <Layout>
             <Header className="site-layout-header">
-              {null ? SelectedUser() : <div className="header-name">hello</div>}                                           
+              {null ? selectedUser() : <div className="header-name">hello</div>}
               <div className="header-options">
                 <Popover content="messages" trigger="hover">
                   <MessageOutlined className="options-header-icon" />
@@ -537,14 +589,14 @@ function Channel() {
             <Content className="site-layout-content">
               {loading ? <SyncOutlined spin className="loading-icons" /> : null}
               {/* {loading ? null  : <NoConversation/> } */}
-              {<NoConversation/> ? <GetMessages/> : null}
+              {<NoConversation /> ? <GetMessages /> : null}
             </Content>
 
             <Footer className="site-layout-footer">
               <button className="sending-button">
                 <PlusCircleOutlined />
               </button>
-              <Input 
+              <Input
                 type="text"
                 width={500}
                 size="large"
@@ -553,7 +605,11 @@ function Channel() {
                 name="SendMessage"
                 onSubmit={onSendMessage}
               />
-              <button className="sending-button" type="submit" onSubmit={onSendMessage} >
+              <button
+                className="sending-button"
+                type="submit"
+                onSubmit={onSendMessage}
+              >
                 <SendOutlined />
               </button>
             </Footer>
@@ -578,8 +634,9 @@ function Channel() {
                 style={{ width: "10px", height: "10px" }}
               >
                 <Avatar size={100} src="img/hello.png" />
+                {/* <Avatar size={100} src={require(`${owner.profile}`)}/> */}
               </Badge>
-              <p className="profile-name">Steven Hocking</p>
+              <p className="profile-name">{owner.name}</p>
               <div className="profile-options">
                 <Popover trigger="hover" content="Documents">
                   <FileTextOutlined className="options-profile-icon" />
